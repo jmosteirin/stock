@@ -1,0 +1,9 @@
+D:\DATA\mosteja\Documents\Visual Studio 2015\Projects\Stocks\StocksTest\bin\Debug\StocksTest.dll
+D:\DATA\mosteja\Documents\Visual Studio 2015\Projects\Stocks\StocksTest\bin\Debug\StocksTest.pdb
+D:\DATA\mosteja\Documents\Visual Studio 2015\Projects\Stocks\StocksTest\bin\Debug\Stocks.exe
+D:\DATA\mosteja\Documents\Visual Studio 2015\Projects\Stocks\StocksTest\bin\Debug\Newtonsoft.Json.dll
+D:\DATA\mosteja\Documents\Visual Studio 2015\Projects\Stocks\StocksTest\bin\Debug\Stocks.pdb
+D:\DATA\mosteja\Documents\Visual Studio 2015\Projects\Stocks\StocksTest\bin\Debug\Newtonsoft.Json.xml
+D:\DATA\mosteja\Documents\Visual Studio 2015\Projects\Stocks\StocksTest\obj\Debug\StocksTest.csprojResolveAssemblyReference.cache
+D:\DATA\mosteja\Documents\Visual Studio 2015\Projects\Stocks\StocksTest\obj\Debug\StocksTest.dll
+D:\DATA\mosteja\Documents\Visual Studio 2015\Projects\Stocks\StocksTest\obj\Debug\StocksTest.pdb

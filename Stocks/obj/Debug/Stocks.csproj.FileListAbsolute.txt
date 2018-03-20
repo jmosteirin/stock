@@ -1,0 +1,8 @@
+d:\data\mosteja\documents\visual studio 2015\Projects\Stocks\Stocks\bin\Debug\Stocks.exe.config
+d:\data\mosteja\documents\visual studio 2015\Projects\Stocks\Stocks\bin\Debug\Stocks.exe
+d:\data\mosteja\documents\visual studio 2015\Projects\Stocks\Stocks\bin\Debug\Stocks.pdb
+d:\data\mosteja\documents\visual studio 2015\Projects\Stocks\Stocks\obj\Debug\Stocks.exe
+d:\data\mosteja\documents\visual studio 2015\Projects\Stocks\Stocks\obj\Debug\Stocks.pdb
+d:\data\mosteja\documents\visual studio 2015\Projects\Stocks\Stocks\bin\Debug\Newtonsoft.Json.dll
+d:\data\mosteja\documents\visual studio 2015\Projects\Stocks\Stocks\bin\Debug\Newtonsoft.Json.xml
+D:\DATA\mosteja\Documents\Visual Studio 2015\Projects\Stocks\Stocks\obj\Debug\Stocks.csprojResolveAssemblyReference.cache
