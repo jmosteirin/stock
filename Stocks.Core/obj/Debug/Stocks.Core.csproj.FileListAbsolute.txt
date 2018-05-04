@@ -1,0 +1,5 @@
+D:\git\stock\Stocks.Core\obj\Debug\Stocks.Core.csproj.CoreCompileInputs.cache
+D:\git\stock\Stocks.Core\bin\Debug\Stocks.Core.dll
+D:\git\stock\Stocks.Core\bin\Debug\Stocks.Core.pdb
+D:\git\stock\Stocks.Core\obj\Debug\Stocks.Core.dll
+D:\git\stock\Stocks.Core\obj\Debug\Stocks.Core.pdb

@@ -1,26 +1,11 @@
 ﻿using Stocks.Entities;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Stocks.Calculators
 {
     public class SingleValueSampleCalculator<T> : SampleCalculator<SingleValueSample<T>>
     {
-        private Func<T, T, T> add = null;
-        private Func<T, T> negate = null;
-        private Func<T, T, T> multiply = null;
-        private Func<T, T, T> divide = null;
-        private Func<T> zero = null;
-        private Func<T> one = null;
-        private Func<T, T> clone = null;
-        private Func<T, T, bool> greaterThan = null;
-        private Func<T, T, bool> greaterEqualThan = null;
-        private Func<T, T, bool> lessThan = null;
-        private Func<T, T, bool> lessEqualThan = null;
-        private Func<T, T, bool> equal = null;
         public SingleValueSampleCalculator()
         {
 

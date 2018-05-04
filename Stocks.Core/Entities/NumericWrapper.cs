@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Stocks.Entities
 {
@@ -105,6 +101,25 @@ namespace Stocks.Entities
         public static bool operator ==(NumericWrapper<T> p1, NumericWrapper<T> p2)
         {
             return p1.equal(p1.value, p2.value);
+        }
+        public override bool Equals(object obj)
+        {
+            if (obj is T)
+                return value.Equals(obj);
+            else if (obj is NumericWrapper<T>)
+                return value.Equals(((NumericWrapper<T>)obj).value);
+            else
+                return false;
+        }
+
+        public override int GetHashCode()
+        {
+            return value.GetHashCode();
+        }
+
+        public override string ToString()
+        {
+            return value.ToString();
         }
 
         public static bool operator !=(NumericWrapper<T> p1, NumericWrapper<T> p2)
