@@ -4,7 +4,7 @@ namespace Stocks.Entities
 {
     public class NumericWrapper<T>
     {
-        private T value = default(T);
+        public T Value { get; set; }
         private Func<T, T, T> add = null;
         private Func<T, T> negate = null;
         private Func<T, T, T> multiply = null;
@@ -32,7 +32,7 @@ namespace Stocks.Entities
                               Func<T, T, bool> paramLessEqualThan,
                               Func<T, T, bool> paramEqual)
         {
-            value = paramValue;
+            Value = paramValue;
             add = paramAdd;
             negate = paramNegate;
             multiply = paramMultiply;
@@ -75,76 +75,76 @@ namespace Stocks.Entities
 
         public static NumericWrapper<T> operator +(NumericWrapper<T> p1, NumericWrapper<T> p2)
         {
-            return p1.Build(p1.add(p1.value, p2.value));
+            return p1.Build(p1.add(p1.Value, p2.Value));
         }
 
         public static NumericWrapper<T> operator -(NumericWrapper<T> p1, NumericWrapper<T> p2)
         {
-            return p1.Build(p1.add(p1.value, p1.negate(p2.value)));
+            return p1.Build(p1.add(p1.Value, p1.negate(p2.Value)));
         }
 
         public static NumericWrapper<T> operator -(NumericWrapper<T> p1)
         {
-            return p1.Build(p1.negate(p1.value));
+            return p1.Build(p1.negate(p1.Value));
         }
 
         public static NumericWrapper<T> operator *(NumericWrapper<T> p1, NumericWrapper<T> p2)
         {
-            return p1.Build(p1.multiply(p1.value, p2.value));
+            return p1.Build(p1.multiply(p1.Value, p2.Value));
         }
 
         public static NumericWrapper<T> operator /(NumericWrapper<T> p1, NumericWrapper<T> p2)
         {
-            return p1.Build(p1.divide(p1.value, p2.value));
+            return p1.Build(p1.divide(p1.Value, p2.Value));
         }
 
         public static bool operator ==(NumericWrapper<T> p1, NumericWrapper<T> p2)
         {
-            return p1.equal(p1.value, p2.value);
+            return p1.equal(p1.Value, p2.Value);
         }
         public override bool Equals(object obj)
         {
             if (obj is T)
-                return value.Equals(obj);
+                return Value.Equals(obj);
             else if (obj is NumericWrapper<T>)
-                return value.Equals(((NumericWrapper<T>)obj).value);
+                return Value.Equals(((NumericWrapper<T>)obj).Value);
             else
                 return false;
         }
 
         public override int GetHashCode()
         {
-            return value.GetHashCode();
+            return Value.GetHashCode();
         }
 
         public override string ToString()
         {
-            return value.ToString();
+            return Value.ToString();
         }
 
         public static bool operator !=(NumericWrapper<T> p1, NumericWrapper<T> p2)
         {
-            return !p1.equal(p1.value, p2.value);
+            return !p1.equal(p1.Value, p2.Value);
         }
 
         public static bool operator >=(NumericWrapper<T> p1, NumericWrapper<T> p2)
         {
-            return p1.greaterEqualThan(p1.value, p2.value);
+            return p1.greaterEqualThan(p1.Value, p2.Value);
         }
 
         public static bool operator >(NumericWrapper<T> p1, NumericWrapper<T> p2)
         {
-            return p1.greaterThan(p1.value, p2.value);
+            return p1.greaterThan(p1.Value, p2.Value);
         }
 
         public static bool operator <=(NumericWrapper<T> p1, NumericWrapper<T> p2)
         {
-            return p1.lessEqualThan(p1.value, p2.value);
+            return p1.lessEqualThan(p1.Value, p2.Value);
         }
 
         public static bool operator <(NumericWrapper<T> p1, NumericWrapper<T> p2)
         {
-            return p1.lessThan(p1.value, p2.value);
+            return p1.lessThan(p1.Value, p2.Value);
         }
 
         public static NumericWrapper<double> Build(double paramValue)

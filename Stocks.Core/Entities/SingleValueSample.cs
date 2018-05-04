@@ -9,12 +9,13 @@ namespace Stocks.Entities
         }
         public SingleValueSample(NumericWrapper<T> paramValue, DateTime paramDate)
         {
-            Value = paramValue;
+            InternalValue = paramValue;
             Date = paramDate;
             Valid = true;
             Infinite = false;
         }
-        public NumericWrapper<T> Value { get; set; }
+        public T Value { get => InternalValue.Value; set => InternalValue.Value = value; }
+        internal NumericWrapper<T> InternalValue { get; set; }
         public DateTime Date { get; set; }
         public bool Valid { get; set; }
         public bool Infinite { get; set; }

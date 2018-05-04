@@ -1,6 +1,5 @@
 ﻿using Stocks.Calculators;
 using Stocks.Entities;
-using Stocks.Indicators;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +8,7 @@ namespace Stocks
 {
     public static class SequenceHelper
     {
-        private static SequenceManipulator<DoubleSample, DoubleSampleCalculator> manipulator = new SequenceManipulator<DoubleSample, DoubleSampleCalculator>(new DoubleSampleCalculator());
+        private static SequenceManipulator<DoubleSample, SingleValueSampleCalculator<double, DoubleSample>> manipulator = new SequenceManipulator<DoubleSample, SingleValueSampleCalculator<double, DoubleSample>>(new SingleValueSampleCalculator<double, DoubleSample>());
         public static IEnumerable<DoubleSample> BufferedTransform(this IEnumerable<DoubleSample> paramSequence, int paramNumberOfSamples, Func<Queue<DoubleSample>, DoubleSample, DoubleSample> paramTransform)
         {
             return manipulator.BufferedTransform(paramSequence, paramNumberOfSamples, paramTransform);

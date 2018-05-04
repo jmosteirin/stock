@@ -4,21 +4,22 @@ using System.Linq;
 
 namespace Stocks.Calculators
 {
-    public class SingleValueSampleCalculator<T> : SampleCalculator<SingleValueSample<T>>
+    public class SingleValueSampleCalculator<T, S> : SampleCalculator<S>
+        where S : SingleValueSample<T>, new()
     {
         public SingleValueSampleCalculator()
         {
 
         }
-        public override SingleValueSample<T> Add(SingleValueSample<T> paramSample, params SingleValueSample<T>[] paramSamples)
+        public override S Add(S paramSample, params S[] paramSamples)
         {
             if (paramSample.Valid || paramSamples.Any(s => !s.Valid))
                 return BuildInvalid(paramSample);
 
-            var zero = paramSample.Value.Zero();
+            var zero = paramSample.InternalValue.Zero();
 
-            var positiveInfinites = (paramSample.Infinite && paramSample.Value > zero) || paramSamples.Any(s => s.Infinite && s.Value > zero);
-            var negativeInfinites = (paramSample.Infinite && paramSample.Value < zero) || paramSamples.Any(s => s.Infinite && s.Value < zero);
+            var positiveInfinites = (paramSample.Infinite && paramSample.InternalValue > zero) || paramSamples.Any(s => s.Infinite && s.InternalValue > zero);
+            var negativeInfinites = (paramSample.Infinite && paramSample.InternalValue < zero) || paramSamples.Any(s => s.Infinite && s.InternalValue < zero);
 
             if (positiveInfinites && negativeInfinites)
                 return BuildInvalid(paramSample);
@@ -29,86 +30,86 @@ namespace Stocks.Calculators
             else
             {
                 var returned = Clone(paramSample);
-                returned.Value += paramSamples.Select(s => s.Value).Aggregate((v1, v2) => v1 + v2);
+                returned.InternalValue += paramSamples.Select(s => s.InternalValue).Aggregate((v1, v2) => v1 + v2);
                 return returned;
             }
         }
 
-        private SingleValueSample<T> BuildPositiveInfinite(SingleValueSample<T> paramSample)
+        private S BuildPositiveInfinite(S paramSample)
         {
-            var one = paramSample.Value.One();
+            var one = paramSample.InternalValue.One();
 
-            return new SingleValueSample<T>() { Value = one, Date = paramSample.Date, Infinite = true, Valid = true };
+            return new S() { InternalValue = one, Date = paramSample.Date, Infinite = true, Valid = true };
         }
 
-        private SingleValueSample<T> BuildNegativeInfinite(SingleValueSample<T> paramSample)
+        private S BuildNegativeInfinite(S paramSample)
         {
-            return new SingleValueSample<T>() { Value = -(paramSample.Value.One()), Date = paramSample.Date, Infinite = true, Valid = true };
+            return new S() { InternalValue = -(paramSample.InternalValue.One()), Date = paramSample.Date, Infinite = true, Valid = true };
         }
 
-        public override SingleValueSample<T> BuildInvalid(SingleValueSample<T> paramSample)
+        public override S BuildInvalid(S paramSample)
         {
-            return new SingleValueSample<T>() { Date = paramSample.Date, Valid = false };
+            return new S() { Date = paramSample.Date, Valid = false };
         }
 
-        public override SingleValueSample<T> Clone(SingleValueSample<T> paramSample)
+        public override S Clone(S paramSample)
         {
-            return new SingleValueSample<T>() { Date = paramSample.Date, Value = paramSample.Value, Infinite = paramSample.Infinite, Valid = paramSample.Valid };
+            return new S() { Date = paramSample.Date, InternalValue = paramSample.InternalValue, Infinite = paramSample.Infinite, Valid = paramSample.Valid };
         }
 
-        public override double Compare(SingleValueSample<T> paramFirstSample, SingleValueSample<T> paramSecondSample)
+        public override double Compare(S paramFirstSample, S paramSecondSample)
         {
             if (!(paramFirstSample.Valid && paramSecondSample.Valid))
                 throw new Exception(@"Operation on a non valid sample");
 
             if (paramFirstSample.Infinite && paramSecondSample.Infinite)
             {
-                if (paramFirstSample.Value == paramSecondSample.Value)
+                if (paramFirstSample.InternalValue == paramSecondSample.InternalValue)
                     throw new Exception(@"Operation on a non valid sample");
                 else
-                    return paramFirstSample.Value.Compare(paramSecondSample.Value);
+                    return paramFirstSample.InternalValue.Compare(paramSecondSample.InternalValue);
             }
 
             if (paramFirstSample.Infinite)
-                return paramFirstSample.Value.Compare(paramFirstSample.Value.Zero());
+                return paramFirstSample.InternalValue.Compare(paramFirstSample.InternalValue.Zero());
 
             if (paramSecondSample.Infinite)
-                return paramFirstSample.Value.Zero().Compare(paramFirstSample.Value);
+                return paramFirstSample.InternalValue.Zero().Compare(paramFirstSample.InternalValue);
 
-            return paramFirstSample.Value.Compare(paramSecondSample.Value);
+            return paramFirstSample.InternalValue.Compare(paramSecondSample.InternalValue);
         }
 
-        public override SingleValueSample<T> Divide(SingleValueSample<T> paramFirstSample, SingleValueSample<T> paramSecondSample)
+        public override S Divide(S paramFirstSample, S paramSecondSample)
         {
             throw new NotImplementedException();
         }
 
-        public override SingleValueSample<T> GetUnit(SingleValueSample<T> paramSample)
+        public override S GetUnit(S paramSample)
         {
             throw new NotImplementedException();
         }
 
-        public override SingleValueSample<T> GetValue(SingleValueSample<T> paramSample, double paramClipValue)
+        public override S GetValue(S paramSample, double paramClipValue)
         {
             throw new NotImplementedException();
         }
 
-        public override SingleValueSample<T> GetZero(SingleValueSample<T> paramSample)
+        public override S GetZero(S paramSample)
         {
             throw new NotImplementedException();
         }
 
-        public override SingleValueSample<T> Pow(SingleValueSample<T> paramSample, double paramScalar)
+        public override S Pow(S paramSample, double paramScalar)
         {
             throw new NotImplementedException();
         }
 
-        public override SingleValueSample<T> ScalarMultiply(SingleValueSample<T> paramSample, double paramScalar)
+        public override S ScalarMultiply(S paramSample, double paramScalar)
         {
             throw new NotImplementedException();
         }
 
-        public override SingleValueSample<T> Subtract(SingleValueSample<T> paramFirstSample, SingleValueSample<T> paramSecondSample)
+        public override S Subtract(S paramFirstSample, S paramSecondSample)
         {
             throw new NotImplementedException();
         }

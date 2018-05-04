@@ -8,3 +8,12 @@ d:\data\mosteja\documents\visual studio 2015\Projects\Stocks\Stocks\bin\Debug\Ne
 D:\DATA\mosteja\Documents\Visual Studio 2015\Projects\Stocks\Stocks\obj\Debug\Stocks.csprojResolveAssemblyReference.cache
 D:\git\stock\Stocks\obj\Debug\Stocks.csproj.CoreCompileInputs.cache
 D:\git\stock\Stocks\obj\Debug\Stocks.csprojResolveAssemblyReference.cache
+D:\git\stock\Stocks\bin\Debug\Stocks.exe.config
+D:\git\stock\Stocks\bin\Debug\Stocks.exe
+D:\git\stock\Stocks\bin\Debug\Stocks.pdb
+D:\git\stock\Stocks\bin\Debug\Newtonsoft.Json.dll
+D:\git\stock\Stocks\bin\Debug\Stocks.Core.dll
+D:\git\stock\Stocks\bin\Debug\Stocks.Core.pdb
+D:\git\stock\Stocks\bin\Debug\Newtonsoft.Json.xml
+D:\git\stock\Stocks\obj\Debug\Stocks.exe
+D:\git\stock\Stocks\obj\Debug\Stocks.pdb
