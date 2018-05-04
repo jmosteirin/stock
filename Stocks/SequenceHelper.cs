@@ -1,4 +1,6 @@
-﻿using Stocks.Indicators;
+﻿using Stocks.Calculators;
+using Stocks.Entities;
+using Stocks.Indicators;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,181 +9,98 @@ namespace Stocks
 {
     public static class SequenceHelper
     {
-        public static IEnumerable<Sample> BufferedTransform(this IEnumerable<Sample> paramSequence, int paramNumberOfSamples, Func<Queue<Sample>, Sample, Sample> paramTransform)
+        private static SequenceManipulator<DoubleSample, DoubleSampleCalculator> manipulator = new SequenceManipulator<DoubleSample, DoubleSampleCalculator>(new DoubleSampleCalculator());
+        public static IEnumerable<DoubleSample> BufferedTransform(this IEnumerable<DoubleSample> paramSequence, int paramNumberOfSamples, Func<Queue<DoubleSample>, DoubleSample, DoubleSample> paramTransform)
         {
-            Queue<Sample> buffer = new Queue<Sample>();
-
-            foreach (var sample in paramSequence)
-            {
-                buffer.Enqueue(sample);
-
-                if (buffer.Count() > paramNumberOfSamples)
-                    buffer.Dequeue();
-
-                if (buffer.Any(s => !s.Valid))
-                    yield return new Sample() { Value = 0, Date = sample.Date, Valid = false };
-                else
-                {
-                    yield return paramTransform(buffer, sample);
-                }
-            }
+            return manipulator.BufferedTransform(paramSequence, paramNumberOfSamples, paramTransform);
         }
-        public static IEnumerable<Sample> Transform(this IEnumerable<Sample> paramSequence, Func<Sample, Sample> paramTransform)
+        public static IEnumerable<DoubleSample> Transform(this IEnumerable<DoubleSample> paramSequence, Func<DoubleSample, DoubleSample> paramTransform)
         {
-            foreach (var sample in paramSequence)
-            {
-                if (!sample.Valid)
-                    yield return new Sample() { Valid = false, Date = sample.Date };
-                else
-                    yield return paramTransform(sample);
-            }
+            return manipulator.Transform(paramSequence, paramTransform);
         }
-        public static IEnumerable<Sample> SetToZeroSamplesThatNot(this IEnumerable<Sample> paramSequence, Func<Sample, bool> paramCondition)
+        public static IEnumerable<DoubleSample> SetToZeroSamplesThatNot(this IEnumerable<DoubleSample> paramSequence, Func<DoubleSample, bool> paramCondition)
         {
-            return paramSequence.Transform(s => paramCondition(s) ? s.Clone() : new Sample() { Value = 0, Date = s.Date, Infinite = s.Infinite, Valid = s.Valid });
+            return manipulator.SetToZeroSamplesThatNot(paramSequence, paramCondition);
         }
-        public static IEnumerable<Sample> OnlyPositives(this IEnumerable<Sample> paramSequence)
+        public static IEnumerable<DoubleSample> OnlyPositives(this IEnumerable<DoubleSample> paramSequence)
         {
-            return paramSequence.SetToZeroSamplesThatNot(s => (s.Value > 0));
+            return manipulator.OnlyPositives(paramSequence);
         }
-        public static IEnumerable<Sample> OnlyNegatives(this IEnumerable<Sample> paramSequence)
+        public static IEnumerable<DoubleSample> OnlyNegatives(this IEnumerable<DoubleSample> paramSequence)
         {
-            return paramSequence.SetToZeroSamplesThatNot(s => (s.Value < 0));
+            return manipulator.OnlyNegatives(paramSequence);
         }
-        public static IEnumerable<Sample> Accumulate(this IEnumerable<Sample> paramSequence, int paramNumberOfSamples)
+        public static IEnumerable<DoubleSample> Accumulate(this IEnumerable<DoubleSample> paramSequence, int paramNumberOfSamples)
         {
-            return paramSequence.BufferedTransform(paramNumberOfSamples, (buffer, sample) =>
-            {
-                var infinites = buffer.Where(s => s.Infinite).Select(s => s.Value).Distinct().ToArray();
-                if (infinites.Length == 0)
-                    return new Sample() { Value = buffer.Select(v => v.Value).Sum(), Date = sample.Date, Valid = buffer.Count() == paramNumberOfSamples };
-                else if (infinites.Length == 1)
-                    return new Sample() { Value = infinites[0], Date = sample.Date, Valid = buffer.Count() == paramNumberOfSamples, Infinite = true };
-                else
-                    return new Sample() { Value = 0, Date = sample.Date, Valid = false };
-            });
+            return manipulator.Accumulate(paramSequence, paramNumberOfSamples);
         }
-        public static IEnumerable<Sample> Average(this IEnumerable<Sample> paramSequence, int paramNumberOfSamples)
+        public static IEnumerable<DoubleSample> Average(this IEnumerable<DoubleSample> paramSequence, int paramNumberOfSamples)
         {
-            return paramSequence.BufferedTransform(paramNumberOfSamples, (buffer, sample) =>
-            {
-                var infinites = buffer.Where(s => s.Infinite).Select(s => s.Value).Distinct().ToArray();
-                if (infinites.Length == 0)
-                    return new Sample() { Value = buffer.Select(v => v.Value).Average(), Date = sample.Date, Valid = buffer.Count() == paramNumberOfSamples };
-                else if (infinites.Length == 1)
-                    return new Sample() { Value = infinites[0], Date = sample.Date, Valid = buffer.Count() == paramNumberOfSamples, Infinite = true };
-                else
-                    return new Sample() { Value = 0, Date = sample.Date, Valid = false };
-            });
+            return manipulator.Average(paramSequence, paramNumberOfSamples);
         }
-        public static IEnumerable<Sample> ExponentialAverage(this IEnumerable<Sample> paramSequence, int paramNumberOfSamples)
+        public static IEnumerable<DoubleSample> ExponentialAverage(this IEnumerable<DoubleSample> paramSequence, int paramNumberOfSamples)
         {
-            var multiplier = 2.0/(paramNumberOfSamples + 1.0);
-            var count = 0;
-
-            Sample previousSample = null;
-            foreach (var sample in paramSequence)
-            {
-                if (count <= paramNumberOfSamples)
-                    yield return previousSample = sample;
-                else
-                    yield return previousSample = sample.Subtract(previousSample).Multiply(multiplier).Add(previousSample);
-                count++;
-            }
+            return manipulator.ExponentialAverage(paramSequence, paramNumberOfSamples);
         }
-        public static IEnumerable<Sample> Subtract(this IEnumerable<Sample> paramSequence, IEnumerable<Sample> paramSecondSequence)
+        public static IEnumerable<DoubleSample> Subtract(this IEnumerable<DoubleSample> paramSequence, IEnumerable<DoubleSample> paramSecondSequence)
         {
-            var enumerator1 = paramSequence.GetEnumerator();
-            var enumerator2 = paramSecondSequence.GetEnumerator();
-            while ((enumerator1.MoveNext()) && (enumerator2.MoveNext()))
-                yield return enumerator1.Current.Subtract(enumerator2.Current);
+            return manipulator.Subtract(paramSequence, paramSecondSequence);
         }
-        public static IEnumerable<Sample> Add(this IEnumerable<Sample> paramSequence, IEnumerable<Sample> paramSecondSequence)
+        public static IEnumerable<DoubleSample> Add(this IEnumerable<DoubleSample> paramSequence, IEnumerable<DoubleSample> paramSecondSequence)
         {
-            var enumerator1 = paramSequence.GetEnumerator();
-            var enumerator2 = paramSecondSequence.GetEnumerator();
-            while ((enumerator1.MoveNext()) && (enumerator2.MoveNext()))
-                yield return enumerator1.Current.Add(enumerator2.Current);
+            return manipulator.Add(paramSequence, paramSecondSequence);
         }
-        public static IEnumerable<Sample> Divide(this IEnumerable<Sample> paramSequence, IEnumerable<Sample> paramSecondSequence)
+        public static IEnumerable<DoubleSample> Divide(this IEnumerable<DoubleSample> paramSequence, IEnumerable<DoubleSample> paramSecondSequence)
         {
-            var enumerator1 = paramSequence.GetEnumerator();
-            var enumerator2 = paramSecondSequence.GetEnumerator();
-            while ((enumerator1.MoveNext()) && (enumerator2.MoveNext()))
-                yield return enumerator1.Current.Divide(enumerator2.Current);
+            return manipulator.Divide(paramSequence, paramSecondSequence);
         }
-        public static IEnumerable<Sample> ScalarMultiplication(this IEnumerable<Sample> paramSequence, double paramScalar)
+        public static IEnumerable<DoubleSample> ScalarMultiplication(this IEnumerable<DoubleSample> paramSequence, double paramScalar)
         {
-            foreach (var sample in paramSequence)
-                yield return sample.Multiply(paramScalar);
+            return manipulator.ScalarMultiplication(paramSequence, paramScalar);
         }
-        public static IEnumerable<Sample> Square(this IEnumerable<Sample> paramSequence)
+        public static IEnumerable<DoubleSample> Square(this IEnumerable<DoubleSample> paramSequence)
         {
-            foreach (var sample in paramSequence)
-                yield return sample.Square();
+            return manipulator.Square(paramSequence);
         }
-        public static IEnumerable<Sample> Sqrt(this IEnumerable<Sample> paramSequence)
+        public static IEnumerable<DoubleSample> Sqrt(this IEnumerable<DoubleSample> paramSequence)
         {
-            foreach (var sample in paramSequence)
-                yield return sample.SquareRoot();
+            return manipulator.Sqrt(paramSequence);
         }
-        public static IEnumerable<Sample> Variance(this IEnumerable<Sample> paramSequence, int paramNumberOfSamples)
+        public static IEnumerable<DoubleSample> Variance(this IEnumerable<DoubleSample> paramSequence, int paramNumberOfSamples)
         {
-            return paramSequence.Subtract(paramSequence.Average(paramNumberOfSamples)).Square().Average(paramNumberOfSamples);
+            return manipulator.Variance(paramSequence, paramNumberOfSamples);
         }
-        public static IEnumerable<Sample> StandardDeviation(this IEnumerable<Sample> paramSequence, int paramNumberOfSamples)
+        public static IEnumerable<DoubleSample> StandardDeviation(this IEnumerable<DoubleSample> paramSequence, int paramNumberOfSamples)
         {
-            return paramSequence.Variance(paramNumberOfSamples).Sqrt();
+            return manipulator.StandardDeviation(paramSequence, paramNumberOfSamples);
         }
-        public static IEnumerable<Sample> TopBollinger(this IEnumerable<Sample> paramSequence, int paramNumberOfSamples = 20, double paramNumberOfStandardDeviations = 2.0)
+        public static IEnumerable<DoubleSample> TopBollinger(this IEnumerable<DoubleSample> paramSequence, int paramNumberOfSamples = 20, double paramNumberOfStandardDeviations = 2.0)
         {
-            return paramSequence.Average(paramNumberOfSamples).
-                Add(paramSequence.StandardDeviation(paramNumberOfSamples).
-                ScalarMultiplication(paramNumberOfStandardDeviations));
+            return manipulator.TopBollinger(paramSequence, paramNumberOfSamples, paramNumberOfStandardDeviations);
         }
-        public static IEnumerable<Sample> BottomBollinger(this IEnumerable<Sample> paramSequence, int paramNumberOfSamples = 20, double paramNumberOfStandardDeviations = 2.0)
+        public static IEnumerable<DoubleSample> BottomBollinger(this IEnumerable<DoubleSample> paramSequence, int paramNumberOfSamples = 20, double paramNumberOfStandardDeviations = 2.0)
         {
-            return paramSequence.Average(paramNumberOfSamples).
-                Subtract(paramSequence.StandardDeviation(paramNumberOfSamples).
-                ScalarMultiplication(paramNumberOfStandardDeviations));
+            return manipulator.BottomBollinger(paramSequence, paramNumberOfSamples, paramNumberOfStandardDeviations);
         }
-        public static IEnumerable<Sample> BollingerIndicatorBeforeClipping(this IEnumerable<Sample> paramSequence, double paramFactor)
+        public static IEnumerable<DoubleSample> BollingerIndicatorBeforeClipping(this IEnumerable<DoubleSample> paramSequence, double paramFactor)
         {
-            var bollingerTop = paramSequence.TopBollinger().GetEnumerator();
-            var bollingerBottom = paramSequence.BottomBollinger().GetEnumerator();
-            var average = paramSequence.Average(20).GetEnumerator();
-            var samples = paramSequence.GetEnumerator();
-            while (samples.MoveNext() && bollingerTop.MoveNext() && bollingerBottom.MoveNext() && average.MoveNext())
-            {
-                var value = (samples.Current.Value == average.Current.Value) ? 0 :
-                            ((samples.Current.Value > average.Current.Value) ?
-                            (samples.Current.Value - average.Current.Value) / (paramFactor * (bollingerTop.Current.Value - average.Current.Value)) :
-                            -(samples.Current.Value - average.Current.Value) / (paramFactor * (bollingerBottom.Current.Value - average.Current.Value)));
-
-                yield return new Sample()
-                {
-                    Valid = samples.Current.Valid && bollingerTop.Current.Valid && bollingerBottom.Current.Valid,
-                    Date = samples.Current.Date,
-                    Value = value
-                };
-            }
-
+            return manipulator.BollingerIndicatorBeforeClipping(paramSequence, paramFactor);
         }
-        public static IEnumerable<Sample> MACD(this IEnumerable<Sample> paramSequence)
+        public static IEnumerable<DoubleSample> MACD(this IEnumerable<DoubleSample> paramSequence)
         {
-            return paramSequence.ExponentialAverage(12).Subtract(paramSequence.ExponentialAverage(26));
+            return manipulator.MACD(paramSequence);
         }
-        public static IEnumerable<Sample> MACDHistogram(this IEnumerable<Sample> paramSequence)
+        public static IEnumerable<DoubleSample> MACDHistogram(this IEnumerable<DoubleSample> paramSequence)
         {
-            return paramSequence.MACD().Subtract(paramSequence.ExponentialAverage(9));
+            return manipulator.MACDHistogram(paramSequence);
         }
-        public static IEnumerable<Sample> SellingBuyingSignal(this IEnumerable<Sample> paramSequence, double paramDecayFactor)
+        public static IEnumerable<DoubleSample> SellingBuyingSignal(this IEnumerable<DoubleSample> paramSequence, double paramDecayFactor)
         {
             double returned = 0.0;
             var firstSample = paramSequence.First();
             double lastValue = firstSample.Value;
 
-            yield return new Sample() { Date = firstSample.Date, Value = returned, Valid = false };
+            yield return new DoubleSample() { Date = firstSample.Date, Value = returned, Valid = false };
             foreach (var sample in paramSequence.Skip(1))
             {
                 if ((lastValue < 0) && (sample.Value > -0))
@@ -194,47 +113,21 @@ namespace Stocks
                 else if (returned < 0)
                     returned = Math.Min(0, returned + paramDecayFactor);
 
-                yield return new Sample() { Date = sample.Date, Valid = sample.Valid, Value = returned };
+                yield return new DoubleSample() { Date = sample.Date, Valid = sample.Valid, Value = returned };
                 lastValue = sample.Value;
             }
         }
-        public static IEnumerable<Sample> Clip(this IEnumerable<Sample> paramSequence, double paramClipValue)
+        public static IEnumerable<DoubleSample> Clip(this IEnumerable<DoubleSample> paramSequence, double paramClipValue)
         {
-            if (paramClipValue <= 0)
-                throw new ArgumentException(@"paramClipValue");
-            foreach (var sample in paramSequence)
-            {
-                var value = sample.Value;
-                if (value > paramClipValue)
-                    value = paramClipValue;
-                else if (value < -paramClipValue)
-                    value = -paramClipValue;
-                yield return new Sample() { Value = value, Date = sample.Date, Valid = sample.Valid };
-            }
+            return manipulator.Clip(paramSequence, paramClipValue);
         }
-        public static IEnumerable<Sample> Invert(this IEnumerable<Sample> paramSequence)
+        public static IEnumerable<DoubleSample> Invert(this IEnumerable<DoubleSample> paramSequence)
         {
-            foreach (var sample in paramSequence)
-                yield return new Sample() { Value = -sample.Value, Date = sample.Date, Valid = sample.Valid };
+            return manipulator.Invert(paramSequence);
         }
-        public static IEnumerable<Sample> RSI(this IEnumerable<Sample> paramSequence, int paramNumberOfSamples)
+        public static IEnumerable<DoubleSample> RSI(this IEnumerable<DoubleSample> paramSequence, int paramNumberOfSamples)
         {
-            var collapseToOne = paramSequence.Transform(s =>
-            {
-                if (s.Value > 0)
-                    return new Sample(1.0, s.Date);
-                else if(s.Value < 0)
-                    return new Sample(-1.0, s.Date);
-                else
-                    return new Sample(0.0, s.Date);
-            });
-            return collapseToOne.OnlyPositives().Accumulate(paramNumberOfSamples).
-                    Divide(collapseToOne.OnlyNegatives().Invert().Accumulate(paramNumberOfSamples)).
-                    Transform(s => {
-                        var sample100 = new Sample(100, s.Date);
-                        var sample1 = new Sample(1, s.Date);
-                        return sample100.Subtract(sample100.Divide(sample1.Add(s)));
-                    });
+            return manipulator.RSI(paramSequence, paramNumberOfSamples);
         }
     }
 }

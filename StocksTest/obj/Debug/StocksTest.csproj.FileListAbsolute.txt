@@ -7,3 +7,7 @@ D:\DATA\mosteja\Documents\Visual Studio 2015\Projects\Stocks\StocksTest\bin\Debu
 D:\DATA\mosteja\Documents\Visual Studio 2015\Projects\Stocks\StocksTest\obj\Debug\StocksTest.csprojResolveAssemblyReference.cache
 D:\DATA\mosteja\Documents\Visual Studio 2015\Projects\Stocks\StocksTest\obj\Debug\StocksTest.dll
 D:\DATA\mosteja\Documents\Visual Studio 2015\Projects\Stocks\StocksTest\obj\Debug\StocksTest.pdb
+D:\git\stock\StocksTest\obj\Debug\StocksTest.csprojResolveAssemblyReference.cache
+D:\git\stock\StocksTest\obj\Debug\StocksTest.csproj.CoreCompileInputs.cache
+D:\git\stock\StocksTest\obj\Debug\StocksTest.dll
+D:\git\stock\StocksTest\obj\Debug\StocksTest.pdb

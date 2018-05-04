@@ -10,10 +10,10 @@ namespace Stocks.Indicators
     public class Indicator : IIndicator
     {
         Dictionary<EParameter, double> parameters = new Dictionary<EParameter, double>();
-        Func<IEnumerable<Sample>, IEnumerable<Sample>, IEnumerable<Sample>, Dictionary<EParameter, double>, IEnumerable<Sample>> behaviour = null;
+        Func<IEnumerable<DoubleSample>, IEnumerable<DoubleSample>, IEnumerable<DoubleSample>, Dictionary<EParameter, double>, IEnumerable<DoubleSample>> behaviour = null;
         string name = String.Empty;
 
-        public Indicator(string paramName, Func<IEnumerable<Sample>, IEnumerable<Sample>, IEnumerable<Sample>, Dictionary<EParameter, double>, IEnumerable<Sample>> paramBehaviour, IEnumerable<Tuple<EParameter, double>> paramParameters)
+        public Indicator(string paramName, Func<IEnumerable<DoubleSample>, IEnumerable<DoubleSample>, IEnumerable<DoubleSample>, Dictionary<EParameter, double>, IEnumerable<DoubleSample>> paramBehaviour, IEnumerable<Tuple<EParameter, double>> paramParameters)
         {
             foreach (var tuple in paramParameters)
                 parameters[tuple.Item1] = tuple.Item2;
@@ -27,7 +27,7 @@ namespace Stocks.Indicators
             return name;
         }
 
-        public IEnumerable<Sample> GetValue(IEnumerable<Sample> paramMidPoints, IEnumerable<Sample> paramHighPoints, IEnumerable<Sample> paramLowPoints)
+        public IEnumerable<DoubleSample> GetValue(IEnumerable<DoubleSample> paramMidPoints, IEnumerable<DoubleSample> paramHighPoints, IEnumerable<DoubleSample> paramLowPoints)
         {
             return behaviour(paramMidPoints, paramHighPoints, paramLowPoints, parameters);
         }

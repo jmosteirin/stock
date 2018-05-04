@@ -11,7 +11,7 @@ namespace Stocks.Indicators
         string GetName();
         int GetExtraDimensionCount();
         void SetExtraDimension(int paramDimension, double paramDimensionValue);
-        IEnumerable<Sample> GetValue(IEnumerable<Sample> paramMidPoints, IEnumerable<Sample> paramHighPoints, IEnumerable<Sample> paramLowPoints);
+        IEnumerable<DoubleSample> GetValue(IEnumerable<DoubleSample> paramMidPoints, IEnumerable<DoubleSample> paramHighPoints, IEnumerable<DoubleSample> paramLowPoints);
         string GetDimensionName(int paramDimension);
     }
 }

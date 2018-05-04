@@ -18,9 +18,9 @@ namespace Stocks
         {
             IInvestingContext investingContext = new InvestingContext();
             var candles = investingContext.GetCandles(500, Entities.EIndex.DowJones);
-            var midPoints = candles.Select(c => new Sample() { Date = c.Date, Valid = true, Value = (c.High + c.Low) / 2.0 }).ToArray();
-            var highPoints = candles.Select(c => new Sample() { Date = c.Date, Valid = true, Value = c.High }).ToArray();
-            var lowPoints = candles.Select(c => new Sample() { Date = c.Date, Valid = true, Value = c.Low }).ToArray();
+            var midPoints = candles.Select(c => new DoubleSample() { Date = c.Date, Valid = true, Value = (c.High + c.Low) / 2.0 }).ToArray();
+            var highPoints = candles.Select(c => new DoubleSample() { Date = c.Date, Valid = true, Value = c.High }).ToArray();
+            var lowPoints = candles.Select(c => new DoubleSample() { Date = c.Date, Valid = true, Value = c.Low }).ToArray();
 
             var temp = new List<AlgorithmConfiguration>();
             for (int i = 0; i < 8; i++)

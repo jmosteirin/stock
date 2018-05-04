@@ -1,4 +1,5 @@
-﻿using Stocks.Indicators;
+﻿using Stocks.Entities;
+using Stocks.Indicators;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -34,7 +35,7 @@ namespace Stocks.Algorithm
             return result;
         }
 
-        public double EvaluateMoneyEarnedInLast(IEnumerable<Sample> paramMidPoints, IEnumerable<Sample> paramHighPoints, IEnumerable<Sample> paramLowPoints, int paramDays = 100, double paramInitialAmount = 1000.0, double paramValueToBuy = 0.4, double paramValueToSell = -0.4)
+        public double EvaluateMoneyEarnedInLast(IEnumerable<DoubleSample> paramMidPoints, IEnumerable<DoubleSample> paramHighPoints, IEnumerable<DoubleSample> paramLowPoints, int paramDays = 100, double paramInitialAmount = 1000.0, double paramValueToBuy = 0.4, double paramValueToSell = -0.4)
         {
             var indicators = new Dictionary<string, IIndicator>();
 
@@ -47,7 +48,7 @@ namespace Stocks.Algorithm
                         indicators[key].SetExtraDimension(i, extraDimensions[i]);
             }
 
-            IEnumerable<Sample> eval = Evaluate(indicators, paramMidPoints, paramHighPoints, paramLowPoints);
+            IEnumerable<DoubleSample> eval = Evaluate(indicators, paramMidPoints, paramHighPoints, paramLowPoints);
 
             var evalData = eval.Skip(paramMidPoints.Count() - paramDays).ToArray();
             var checkData = paramMidPoints.Skip(paramMidPoints.Count() - paramDays).ToArray();
@@ -75,9 +76,9 @@ namespace Stocks.Algorithm
             return (wallet + (stockValue * numOfStocks)) / 1000.0;
         }
 
-        private IEnumerable<Sample> Evaluate(Dictionary<string, IIndicator> indicators, IEnumerable<Sample> paramMidPoints, IEnumerable<Sample> paramHighPoints, IEnumerable<Sample> paramLowPoints)
+        private IEnumerable<DoubleSample> Evaluate(Dictionary<string, IIndicator> indicators, IEnumerable<DoubleSample> paramMidPoints, IEnumerable<DoubleSample> paramHighPoints, IEnumerable<DoubleSample> paramLowPoints)
         {
-            IEnumerable<Sample> returned = null;
+            IEnumerable<DoubleSample> returned = null;
             foreach (var key in indicators.Keys)
             {
                 var indicator = indicators[key];

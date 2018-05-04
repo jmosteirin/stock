@@ -26,8 +26,8 @@ namespace Stocks.Indicators
                                          (paramMidPoints, paramHighPoints, paramLowPoints, p) => 
                                             paramHighPoints.Subtract(paramLowPoints).
                                             RSI(14).
-                                            Transform(sam => sam.Multiply(new Sample(2.0, sam.Date)).
-                                            Subtract(new Sample(1.0, sam.Date))),
+                                            Transform(sam => sam.Multiply(new DoubleSample(2.0, sam.Date)).
+                                            Subtract(new DoubleSample(1.0, sam.Date))),
                                          new Tuple<EParameter, double>[0]);
                 default:
                     throw new ArgumentException(@"paramIndicatorName");

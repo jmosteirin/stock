@@ -47,24 +47,29 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Algorithm\AlgorithmConfiguration.cs" />
+    <Compile Include="Calculators\SingleValueSampleCalculator.cs" />
     <Compile Include="Entities\IndicatorConstants.cs" />
     <Compile Include="Entities\EParameter.cs" />
-    <Compile Include="Indicators\Indicator.cs" />
-    <Compile Include="Indicators\IndicatorFactory.cs" />
+    <Compile Include="Entities\NumericWrapper.cs" />
     <Compile Include="Entities\Candle.cs" />
     <Compile Include="Entities\EIndex.cs" />
-    <Compile Include="Indicators\IIndicator.cs" />
     <Compile Include="IInvestingContext.cs" />
-    <Compile Include="Indicators\Sample.cs" />
+    <Compile Include="Entities\SingleValueSample.cs" />
+    <Compile Include="Model\Constants.cs" />
+    <Compile Include="Sample.cs" />
     <Compile Include="InvestingContext.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SequenceHelper.cs" />
+    <Compile Include="SampleCalculator.cs" />
+    <Compile Include="SequenceManipulator.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Algorithm\" />
+    <Folder Include="Indicators\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

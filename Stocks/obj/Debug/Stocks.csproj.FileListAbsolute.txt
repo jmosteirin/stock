@@ -6,3 +6,5 @@ d:\data\mosteja\documents\visual studio 2015\Projects\Stocks\Stocks\obj\Debug\St
 d:\data\mosteja\documents\visual studio 2015\Projects\Stocks\Stocks\bin\Debug\Newtonsoft.Json.dll
 d:\data\mosteja\documents\visual studio 2015\Projects\Stocks\Stocks\bin\Debug\Newtonsoft.Json.xml
 D:\DATA\mosteja\Documents\Visual Studio 2015\Projects\Stocks\Stocks\obj\Debug\Stocks.csprojResolveAssemblyReference.cache
+D:\git\stock\Stocks\obj\Debug\Stocks.csproj.CoreCompileInputs.cache
+D:\git\stock\Stocks\obj\Debug\Stocks.csprojResolveAssemblyReference.cache
