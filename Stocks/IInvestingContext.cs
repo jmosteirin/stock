@@ -11,5 +11,7 @@ namespace Stocks
     {
         IEnumerable<Candle> GetCandles(int paramCount = 70, EIndex paramIndex = EIndex.Ibex35, int paramIntervalInSeconds = 86400);
         IEnumerable<Candle> GetCandlesEx(EIndex paramIndex = EIndex.Ibex35);
+        string GetIndexDescription(int paramIndex);
+        IEnumerable<Index> GetIndexes(int paramStartId = 0, int paramEndId = 10000);
     }
 }

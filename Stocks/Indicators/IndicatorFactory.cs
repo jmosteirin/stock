@@ -13,16 +13,16 @@ namespace Stocks.Indicators
         {
             switch (paramIndicatorName)
             {
-                case IndicatorConstants.Bollinger:
-                    return new Indicator(IndicatorConstants.Bollinger,
+                case Constants.Bollinger:
+                    return new Indicator(Constants.Bollinger,
                                          (paramMidPoints, paramHighPoints, paramLowPoints, p) => paramMidPoints.BollingerIndicatorBeforeClipping(p[EParameter.ClipValue]).Invert().Clip(1.0),
                                          new Tuple<EParameter, double>[] { new Tuple<Entities.EParameter, double>(EParameter.ClipValue, 1.0) });
-                case IndicatorConstants.MACD:
-                    return new Indicator(IndicatorConstants.MACD,
+                case Constants.MACD:
+                    return new Indicator(Constants.MACD,
                                          (paramMidPoints, paramHighPoints, paramLowPoints, p) => paramMidPoints.MACDHistogram().SellingBuyingSignal(p[EParameter.DecayFactor]),
                                          new Tuple<EParameter, double>[] { new Tuple<Entities.EParameter, double>(EParameter.DecayFactor, 0.2) });
-                case IndicatorConstants.RSI:
-                    return new Indicator(IndicatorConstants.RSI,
+                case Constants.RSI:
+                    return new Indicator(Constants.RSI,
                                          (paramMidPoints, paramHighPoints, paramLowPoints, p) => 
                                             paramHighPoints.Subtract(paramLowPoints).
                                             RSI(14).

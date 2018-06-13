@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using Stocks.Entities;
 using System.Net;
 using System.IO;
+using System.Xml;
+using System.Text.RegularExpressions;
 
 namespace Stocks
 {
@@ -36,7 +38,7 @@ namespace Stocks
             string responseFromServer = reader.ReadToEnd();
             // Display the content.
             dynamic data = Newtonsoft.Json.JsonConvert.DeserializeObject(responseFromServer);
-            foreach(var c in ((IEnumerable<dynamic>)data.candles))
+            foreach (var c in ((IEnumerable<dynamic>)data.candles))
             {
                 yield return new Candle
                 {
@@ -50,6 +52,39 @@ namespace Stocks
             // Clean up the streams and the response.
             reader.Close();
             response.Close();
+        }
+
+        public string GetIndexDescription(int paramIndex)
+        {
+            // Create a request for the URL. 
+            HttpWebRequest request = (HttpWebRequest)(HttpWebRequest.Create(
+              String.Format("http://www.investing.com/common/modules/js_instrument_chart/api/data.php?pair_id={2}&pair_id_for_news={2}&chart_type=candlestick&pair_interval={0}&candle_count={1}&events=yes&volume_series=yes",
+              86400,
+              70,
+              paramIndex)));
+            request.Headers.Add(@"Pragma: no - cache");
+            request.Headers.Add(@"X-Requested-With: XMLHttpRequest");
+            request.Headers.Add(@"Cookie: optimizelyEndUserId=oeu1467020917805r0.45394119451797144; __gads=ID=de969a9d8fe47679:T=1467020918:S=ALNI_MaU-yep1-fB8DbnGaUgyIX8G2PRLw; cookieConsent=was-set; editionPostpone=1467201240862; PHPSESSID=te9dkd6si0opoo285lrgkvee92; fpros_popup=up; geoC=ES; show_big_billboard1=true; _gat=1; _gat_allSitesTracker=1; gtmFired=OK; notification_news_411577=9854; SideBlockUser=a%3A2%3A%7Bs%3A10%3A%22stack_size%22%3Ba%3A1%3A%7Bs%3A11%3A%22last_quotes%22%3Bi%3A8%3B%7Ds%3A6%3A%22stacks%22%3Ba%3A1%3A%7Bs%3A11%3A%22last_quotes%22%3Ba%3A3%3A%7Bi%3A0%3Ba%3A3%3A%7Bs%3A7%3A%22pair_ID%22%3Bs%3A5%3A%2244336%22%3Bs%3A10%3A%22pair_title%22%3Bs%3A0%3A%22%22%3Bs%3A9%3A%22pair_link%22%3Bs%3A27%3A%22%2Findices%2Fvolatility-s-p-500%22%3B%7Di%3A1%3Ba%3A3%3A%7Bs%3A7%3A%22pair_ID%22%3Bs%3A3%3A%22174%22%3Bs%3A10%3A%22pair_title%22%3Bs%3A0%3A%22%22%3Bs%3A9%3A%22pair_link%22%3Bs%3A17%3A%22%2Findices%2Fspain-35%22%3B%7Di%3A2%3Ba%3A3%3A%7Bs%3A7%3A%22pair_ID%22%3Bs%3A2%3A%2227%22%3Bs%3A10%3A%22pair_title%22%3Bs%3A0%3A%22%22%3Bs%3A9%3A%22pair_link%22%3Bs%3A15%3A%22%2Findices%2Fuk-100%22%3B%7D%7D%7D%7D; optimizelySegments=%7B%224225444387%22%3A%22gc%22%2C%224226973206%22%3A%22search%22%2C%224232593061%22%3A%22false%22%2C%225010352657%22%3A%22none%22%7D; optimizelyBuckets=%7B%7D; _ga=GA1.2.1028568263.1467020918");
+            request.UserAgent = @"Mozilla / 5.0(Windows NT 6.1; WOW64) AppleWebKit / 537.36(KHTML, like Gecko) Chrome / 51.0.2704.103 Safari / 537.36";
+            request.Referer = @"http://www.investing.com/indices/spain-35";
+            request.Host = @"www.investing.com";
+            request.Accept = @"application/json, text/javascript, */*; q=0.01";
+            // Get the response.
+            WebResponse response = request.GetResponse();
+            // Get the stream containing content returned by the server.
+            Stream dataStream = response.GetResponseStream();
+            // Open the stream using a StreamReader for easy access.
+            StreamReader reader = new StreamReader(dataStream);
+            // Read the content.
+            string responseFromServer = reader.ReadToEnd();
+            // Display the content.
+            dynamic data = Newtonsoft.Json.JsonConvert.DeserializeObject(responseFromServer);
+            
+            // Clean up the streams and the response.
+            reader.Close();
+            response.Close();
+
+            return Regex.Match((string)(data.html.chart_info), @"<span[^>]*>([^<]*)<\/span>").Groups[1].Value;
         }
 
         public IEnumerable<Candle> GetCandlesEx(EIndex paramIndex = EIndex.Ibex35)
@@ -94,6 +129,21 @@ namespace Stocks
             reader.Close();
             response.Close();
         }
-        
+
+        public IEnumerable<Index> GetIndexes(int paramStartId = 0, int paramEndId = 10000)
+        {
+            for (int i = paramStartId; i < paramEndId; i++)
+            {
+                var description = String.Empty;
+
+                try
+                {
+                    description = GetIndexDescription(i);
+                }
+                catch { continue; }
+
+                yield return new Index() { Id = i, Description = description };
+            }
+        }
     }
 }
