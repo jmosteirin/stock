@@ -8,7 +8,9 @@ namespace Stocks
 {
     public interface IStockLogic
     {
-        void RefreshStoredIndexes(int paramStartId = 0, int paramEndId = 10000);
+        void RefreshStoredIndexes();
         void LetsBecomeRich();
+        void ExportCSV(string paramFileName);
+        void AddIndexesToCache(int paramStartId, int paramEndId);
     }
 }

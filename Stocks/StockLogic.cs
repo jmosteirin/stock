@@ -24,17 +24,17 @@ namespace Stocks
 
         public void LetsBecomeRich()
         {
-            //var candles = new StockInformation(investingContext.GetCandles(500, Entities.EIndex.DowJones));
+            var candles = new StockInformation(investingContext.GetCandles(500, Entities.EIndex.DowJones));
 
-            //AlgorithmConfiguration[] algorithms = InitAlgorithms();
+            AlgorithmConfiguration[] algorithms = InitAlgorithms();
 
-            //for (int i = 0; i < 15; i++)
-            //{
-            //    algorithms = SortAlgorithms(candles, algorithms);
-            //    algorithms = CombineAlgorithms(algorithms);
-            //}
+            for (int i = 0; i < 15; i++)
+            {
+                algorithms = SortAlgorithms(candles, algorithms);
+                algorithms = CombineAlgorithms(algorithms);
+            }
 
-            //PrintAlgorithms(candles, algorithms);
+            PrintAlgorithms(candles, algorithms);
         }
 
         private static void PrintAlgorithms(StockInformation paramCandles, AlgorithmConfiguration[] paramAlgorithms)
@@ -95,16 +95,56 @@ namespace Stocks
             return algorithm;
         }
 
-        public void RefreshStoredIndexes(int paramStartId = 0, int paramEndId = 10000)
+        public void RefreshStoredIndexes()
         {
-            var indexes = investingContext.GetIndexes(paramStartId, paramEndId);
+            var indexes = investingContext.GetIndexes(Constants.StockIndexesStaringId, Constants.StockIndexesEndingId);
+            SaveIndexesToCache(indexes);
+        }
+
+        private void SaveIndexesToCache(IEnumerable<Index> paramIndexes)
+        {
             using (var fileStream = new FileStream(Constants.IndexesCacheFileName, FileMode.Create, FileAccess.Write))
             {
                 using (var streamWriter = new StreamWriter(fileStream))
                 {
-                    streamWriter.Write(JsonConvert.SerializeObject(indexes));
+                    streamWriter.Write(JsonConvert.SerializeObject(paramIndexes));
                 }
             }
+        }
+
+        public void ExportCSV(string paramFileName)
+        {
+            var indexes = ReadIndexesFromCache();
+
+            using (var fileStream = new FileStream(paramFileName, FileMode.Create, FileAccess.Write))
+            {
+                using (var streamWriter = new StreamWriter(fileStream))
+                {
+                    foreach (var index in indexes)
+                        streamWriter.WriteLine(String.Format(@"{0};{1}", index.Id, index.Description));
+                }
+            }
+        }
+
+        private Index[] ReadIndexesFromCache()
+        {
+            string fileContent = String.Empty;
+            using (var fileStream = new FileStream(Constants.IndexesCacheFileName, FileMode.Open, FileAccess.Read))
+            {
+                using (var streamReader = new StreamReader(fileStream))
+                {
+                    fileContent = streamReader.ReadToEnd();
+                }
+            }
+            var indexes = JsonConvert.DeserializeObject<Index[]>(fileContent);
+            return indexes;
+        }
+
+        public void AddIndexesToCache(int paramStartId, int paramEndId)
+        {
+            var indexes = ReadIndexesFromCache().ToList();
+            indexes.AddRange(investingContext.GetIndexes(paramStartId, paramEndId));
+            SaveIndexesToCache(indexes);
         }
     }
 }

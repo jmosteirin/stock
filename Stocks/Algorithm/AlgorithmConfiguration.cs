@@ -29,8 +29,6 @@ namespace Stocks.Algorithm
                 module += Math.Pow(result.Data[key][0], 2.0);
             }
             module = Math.Sqrt(module);
-            //foreach (var key in this.Data.Keys)
-            //    result.Data[key][0] /= module;
             return result;
         }
 

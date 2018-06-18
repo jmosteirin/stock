@@ -13,5 +13,7 @@ namespace Stocks.Entities
         public const string RSI = @"RSI";
 
         public const string IndexesCacheFileName = @"stock-indexes.json";
+        public const int StockIndexesStaringId = 238;
+        public const int StockIndexesEndingId = 12000;
     }
 }

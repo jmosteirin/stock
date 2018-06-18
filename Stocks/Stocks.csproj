@@ -60,7 +60,7 @@
   <ItemGroup>
     <Compile Include="Algorithm\AlgorithmConfiguration.cs" />
     <Compile Include="Entities\Index.cs" />
-    <Compile Include="Entities\IndicatorConstants.cs" />
+    <Compile Include="Entities\Constants.cs" />
     <Compile Include="Entities\EParameter.cs" />
     <Compile Include="Entities\StockInformation.cs" />
     <Compile Include="Indicators\Indicator.cs" />
