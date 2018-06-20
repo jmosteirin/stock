@@ -18,6 +18,13 @@ namespace Stocks
         static IInvestingContext investingContext = new InvestingContext();
         static IStockLogic stockLogic = new StockLogic(investingContext);
 
+        [Verb("show-candles", HelpText = "Shows the candles for a particular index.")]
+        class ShowCandlesOptions
+        {
+            [Option('i', @"index")]
+            public int Index { get; set; }
+        }
+
         [Verb("rich", HelpText = "Lets get rich.")]
         class RichOptions
         {
@@ -46,8 +53,9 @@ namespace Stocks
 
         static int Main(string[] args)
         {
-            var returned = CommandLine.Parser.Default.ParseArguments<RichOptions, RefreshCachedIndexesOptions, AddIndexesToCacheOptions, ExportCSVOptions>(args)
+            var returned = CommandLine.Parser.Default.ParseArguments<ShowCandlesOptions, RichOptions, RefreshCachedIndexesOptions, AddIndexesToCacheOptions, ExportCSVOptions>(args)
               .MapResult(
+                (ShowCandlesOptions opts) => RunShowCandlesAndReturnExitCode(opts),
                 (RichOptions opts) => RunRichAndReturnExitCode(opts),
                 (RefreshCachedIndexesOptions opts) => RunRefreshCachedIndexesAndReturnExitCode(opts),
                 (AddIndexesToCacheOptions opts) => RunAddIndexesToCacheAndReturnExitCode(opts),
@@ -57,6 +65,19 @@ namespace Stocks
             Console.WriteLine(@"press any key to finish...");
             Console.ReadKey();
             return returned;
+        }
+
+        private static int RunShowCandlesAndReturnExitCode(ShowCandlesOptions opts)
+        {
+            investingContext.GetCandles(paramIndex: (EIndex)opts.Index).ToList().ForEach(c =>
+            {
+                Console.Write(c.Date.ToShortDateString());
+                Console.Write(' ');
+                Console.Write(Math.Round(c.Low, 5));
+                Console.Write(' ');
+                Console.WriteLine(Math.Round(c.High, 5));
+            });
+            return 0;
         }
 
         private static int RunRichAndReturnExitCode(RichOptions opts)

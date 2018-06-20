@@ -18,3 +18,10 @@ D:\git\stock\Stocks\bin\Debug\CommandLine.dll
 D:\git\stock\Stocks\bin\Debug\System.Console.dll
 D:\git\stock\Stocks\bin\Debug\System.Reflection.TypeExtensions.dll
 D:\git\stock\Stocks\bin\Debug\CommandLine.xml
+D:\git\stock\Stocks\obj\Debug\Stocks.csprojResolveAssemblyReference.cache
+D:\git\stock\Stocks\bin\Debug\EntityFramework.dll
+D:\git\stock\Stocks\bin\Debug\EntityFramework.SqlServer.dll
+D:\git\stock\Stocks\bin\Debug\EntityFramework.xml
+D:\git\stock\Stocks\bin\Debug\EntityFramework.SqlServer.xml
+D:\git\stock\Stocks\obj\Debug\Stocks.Migrations.initial.resources
+D:\git\stock\Stocks\obj\Debug\Stocks.csproj.GenerateResource.Cache

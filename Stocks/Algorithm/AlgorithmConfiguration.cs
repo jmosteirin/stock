@@ -1,4 +1,5 @@
-﻿using Stocks.Indicators;
+﻿using Stocks.Entities;
+using Stocks.Indicators;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -32,7 +33,7 @@ namespace Stocks.Algorithm
             return result;
         }
 
-        public double EvaluateMoneyEarnedInLast(IEnumerable<Sample> paramMidPoints, IEnumerable<Sample> paramHighPoints, IEnumerable<Sample> paramLowPoints, int paramDays = 100, double paramInitialAmount = 1000.0, double paramValueToBuy = 0.4, double paramValueToSell = -0.4)
+        public double EvaluateMoneyEarnedInLast(StockInformation paramStockInformation, int paramDays = 100, double paramInitialAmount = 1000.0, double paramValueToBuy = 0.4, double paramValueToSell = -0.4)
         {
             var indicators = new Dictionary<string, IIndicator>();
 
@@ -45,32 +46,44 @@ namespace Stocks.Algorithm
                         indicators[key].SetExtraDimension(i, extraDimensions[i]);
             }
 
-            IEnumerable<Sample> eval = Evaluate(indicators, paramMidPoints, paramHighPoints, paramLowPoints);
+            if (paramStockInformation.StockInformationForIndexes.Count() == 0)
+                throw new Exception(@"No data");
 
-            var evalData = eval.Skip(paramMidPoints.Count() - paramDays).ToArray();
-            var checkData = paramMidPoints.Skip(paramMidPoints.Count() - paramDays).ToArray();
-            var stockValue = 0.0;
-            var numOfStocks = 0.0;
-            var wallet = paramInitialAmount;
-            for (var day = 0; day < checkData.Length; day++)
-            {
-                if ((evalData[day].Value > paramValueToBuy) && (numOfStocks == 0))
-                {
-                    //Buy!!
-                    stockValue = checkData[day].Value;
-                    numOfStocks = wallet / stockValue;
-                    wallet = 0.0;
-                }
-                else if((evalData[day].Value < paramValueToSell) && (numOfStocks != 0))
-                {
-                    //Sell!!
-                    wallet = checkData[day].Value * numOfStocks;
-                    stockValue = 0.0;
-                    numOfStocks = 0.0;
-                }
-            }
+            var numOfSamplesToSkip = paramStockInformation.StockInformationForIndexes.First().MidPoints.Count() - paramDays;
 
-            return (wallet + (stockValue * numOfStocks)) / 1000.0;
+            var maxEarnedMoney = 0.0;
+
+            paramStockInformation.StockInformationForIndexes.
+                Select(s => new
+                {
+                    StockInformationForIndex = s,
+                    EvalData = Evaluate(indicators, s.MidPoints, s.HighPoints, s.LowPoints).Skip(numOfSamplesToSkip).ToArray(),
+                    CheckData = s.MidPoints.Skip(numOfSamplesToSkip).ToArray()
+                }).ToList().ForEach(ctx => { 
+                    var stockValue = 0.0;
+                    var numOfStocks = 0.0;
+                    var wallet = paramInitialAmount;
+                    for (var day = 0; day < paramDays; day++)
+                    {
+                        if ((ctx.EvalData[day].Value > paramValueToBuy) && (numOfStocks == 0))
+                        {
+                            //Buy!!
+                            stockValue = ctx.CheckData[day].Value;
+                            numOfStocks = wallet / stockValue;
+                            wallet = 0.0;
+                        }
+                        else if((ctx.EvalData[day].Value < paramValueToSell) && (numOfStocks != 0))
+                        {
+                            //Sell!!
+                            wallet = ctx.CheckData[day].Value * numOfStocks;
+                            stockValue = 0.0;
+                            numOfStocks = 0.0;
+                        }
+                    }
+
+                    maxEarnedMoney = Math.Max(maxEarnedMoney, (wallet + (stockValue * numOfStocks)) / paramInitialAmount);
+                });
+            return maxEarnedMoney;
         }
 
         private IEnumerable<Sample> Evaluate(Dictionary<string, IIndicator> indicators, IEnumerable<Sample> paramMidPoints, IEnumerable<Sample> paramHighPoints, IEnumerable<Sample> paramLowPoints)

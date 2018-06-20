@@ -24,7 +24,7 @@ namespace Stocks
 
         public void LetsBecomeRich()
         {
-            var candles = new StockInformation(investingContext.GetCandles(500, Entities.EIndex.DowJones));
+            var candles = new StockInformation(new StockInformationForIndex((int)Entities.EIndex.DowJones, investingContext.GetCandles(500, Entities.EIndex.DowJones).ToArray()));
 
             AlgorithmConfiguration[] algorithms = InitAlgorithms();
 
@@ -44,7 +44,7 @@ namespace Stocks
                 StringBuilder builder = new StringBuilder();
                 foreach (var indicator in a.Data)
                     builder.AppendFormat(@"{0}:{1}% ", indicator.Key, Math.Round(indicator.Value[0] * 100, 2));
-                return builder.Append(a.EvaluateMoneyEarnedInLast(paramCandles.MidPoints, paramCandles.HighPoints, paramCandles.LowPoints));
+                return builder.Append(a.EvaluateMoneyEarnedInLast(paramCandles));
             }))
                 Console.WriteLine(amount);
         }
@@ -68,7 +68,7 @@ namespace Stocks
             return (new int[] { 0, 1, 2, 3, 4, 5, 6, 7 }).Select(k => new
             {
                 Algorithm = paramAlgorithms[k],
-                Ratio = paramAlgorithms[k].EvaluateMoneyEarnedInLast(paramCandles.MidPoints, paramCandles.HighPoints, paramCandles.LowPoints)
+                Ratio = paramAlgorithms[k].EvaluateMoneyEarnedInLast(paramCandles)
             }).OrderByDescending(e => e.Ratio).Select(e => e.Algorithm).ToArray();
         }
 

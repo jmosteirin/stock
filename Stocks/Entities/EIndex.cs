@@ -9,6 +9,7 @@ namespace Stocks.Entities
     public enum EIndex
     {
         Ibex35 = 174,
-        DowJones = 169
+        DowJones = 169,
+        Acciona = 449
     }
 }
