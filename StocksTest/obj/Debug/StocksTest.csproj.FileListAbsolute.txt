@@ -7,3 +7,18 @@ D:\DATA\mosteja\Documents\Visual Studio 2015\Projects\Stocks\StocksTest\bin\Debu
 D:\DATA\mosteja\Documents\Visual Studio 2015\Projects\Stocks\StocksTest\obj\Debug\StocksTest.csprojResolveAssemblyReference.cache
 D:\DATA\mosteja\Documents\Visual Studio 2015\Projects\Stocks\StocksTest\obj\Debug\StocksTest.dll
 D:\DATA\mosteja\Documents\Visual Studio 2015\Projects\Stocks\StocksTest\obj\Debug\StocksTest.pdb
+D:\git\stock\StocksTest\bin\Debug\StocksTest.dll
+D:\git\stock\StocksTest\bin\Debug\StocksTest.pdb
+D:\git\stock\StocksTest\bin\Debug\Stocks.exe
+D:\git\stock\StocksTest\bin\Debug\CommandLine.dll
+D:\git\stock\StocksTest\bin\Debug\EntityFramework.dll
+D:\git\stock\StocksTest\bin\Debug\Newtonsoft.Json.dll
+D:\git\stock\StocksTest\bin\Debug\Stocks.pdb
+D:\git\stock\StocksTest\bin\Debug\Stocks.exe.config
+D:\git\stock\StocksTest\bin\Debug\CommandLine.xml
+D:\git\stock\StocksTest\bin\Debug\EntityFramework.xml
+D:\git\stock\StocksTest\bin\Debug\Newtonsoft.Json.xml
+D:\git\stock\StocksTest\obj\Debug\StocksTest.csprojResolveAssemblyReference.cache
+D:\git\stock\StocksTest\obj\Debug\StocksTest.csproj.CoreCompileInputs.cache
+D:\git\stock\StocksTest\obj\Debug\StocksTest.dll
+D:\git\stock\StocksTest\obj\Debug\StocksTest.pdb

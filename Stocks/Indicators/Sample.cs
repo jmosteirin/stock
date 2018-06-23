@@ -30,7 +30,10 @@ namespace Stocks.Indicators
             set
             {
                 infinite = value;
-                Value = GetSign(Value);
+                if (value)
+                {
+                    Value = GetSign(Value);
+                }
             }
         }
         public Sample Subtract(Sample paramOther, DateTime paramDate = default(DateTime))
@@ -45,7 +48,7 @@ namespace Stocks.Indicators
             if (!Infinite && !paramOther.Infinite)
                 return new Sample()
                 {
-                    Value = Value - paramOther.Value,
+                    Value = this.Value - paramOther.Value,
                     Date = (paramDate == default(DateTime)) ? Date : paramDate,
                     Valid = true,
                     Infinite = false
@@ -56,7 +59,7 @@ namespace Stocks.Indicators
                     return new Sample()
                     {
                         Valid = true,
-                        Value = Value,
+                        Value = this.Value,
                         Infinite = true,
                         Date = (paramDate == default(DateTime)) ? Date : paramDate
                     };
@@ -72,7 +75,7 @@ namespace Stocks.Indicators
             {
                 return new Sample()
                 {
-                    Value = Value,
+                    Value = this.Value,
                     Date = (paramDate == default(DateTime)) ? Date : paramDate,
                     Valid = true,
                     Infinite = true
@@ -106,7 +109,7 @@ namespace Stocks.Indicators
             if (!Infinite && !paramOther.Infinite)
                 return new Sample()
                 {
-                    Value = Value + paramOther.Value,
+                    Value = this.Value + paramOther.Value,
                     Date = (paramDate == default(DateTime)) ? Date : paramDate,
                     Valid = true,
                     Infinite = false
@@ -117,7 +120,7 @@ namespace Stocks.Indicators
                     return new Sample()
                     {
                         Valid = true,
-                        Value = Value,
+                        Value = this.Value,
                         Infinite = true,
                         Date = (paramDate == default(DateTime)) ? Date : paramDate
                     };
@@ -133,7 +136,7 @@ namespace Stocks.Indicators
             {
                 return new Sample()
                 {
-                    Value = Value,
+                    Value = this.Value,
                     Date = (paramDate == default(DateTime)) ? Date : paramDate,
                     Valid = true,
                     Infinite = true
@@ -167,7 +170,7 @@ namespace Stocks.Indicators
             if (!Infinite && !paramOther.Infinite)
                 return new Sample()
                 {
-                    Value = Value * paramOther.Value,
+                    Value = this.Value * paramOther.Value,
                     Date = (paramDate == default(DateTime)) ? Date : paramDate,
                     Valid = true,
                     Infinite = false
@@ -205,7 +208,7 @@ namespace Stocks.Indicators
                 else
                     return new Sample()
                     {
-                        Value = GetMultiplicationSign(Value, paramOther.Value),
+                        Value = GetMultiplicationSign(this.Value, paramOther.Value),
                         Date = (paramDate == default(DateTime)) ? Date : paramDate,
                         Valid = true,
                         Infinite = true
@@ -224,7 +227,7 @@ namespace Stocks.Indicators
                 else
                     return new Sample()
                     {
-                        Value = GetMultiplicationSign(Value, paramOther.Value),
+                        Value = GetMultiplicationSign(this.Value, paramOther.Value),
                         Date = (paramDate == default(DateTime)) ? Date : paramDate,
                         Valid = true,
                         Infinite = true
@@ -258,7 +261,7 @@ namespace Stocks.Indicators
                 else
                     return new Sample()
                     {
-                        Value = GetMultiplicationSign(Value, paramScalar),
+                        Value = GetMultiplicationSign(this.Value, paramScalar),
                         Date = (paramDate == default(DateTime)) ? Date : paramDate,
                         Valid = true,
                         Infinite = true
@@ -268,7 +271,7 @@ namespace Stocks.Indicators
             {
                 return new Sample()
                     {
-                        Value = Value*paramScalar,
+                        Value = this.Value *paramScalar,
                         Date = (paramDate == default(DateTime)) ? Date : paramDate,
                         Valid = true,
                         Infinite = false
@@ -295,7 +298,7 @@ namespace Stocks.Indicators
                 else if(paramOther.Value == 0)
                     return new Sample()
                     {
-                        Value = GetSign(Value),
+                        Value = GetSign(this.Value),
                         Date = (paramDate == default(DateTime)) ? Date : paramDate,
                         Valid = true,
                         Infinite = true
@@ -303,7 +306,7 @@ namespace Stocks.Indicators
                 else
                     return new Sample()
                     {
-                        Value = Value / paramOther.Value,
+                        Value = this.Value / paramOther.Value,
                         Date = (paramDate == default(DateTime)) ? Date : paramDate,
                         Valid = true,
                         Infinite = false
@@ -322,7 +325,7 @@ namespace Stocks.Indicators
                 if(paramOther.Value == 0)
                     return new Sample()
                     {
-                        Value = Value,
+                        Value = this.Value,
                         Date = (paramDate == default(DateTime)) ? Date : paramDate,
                         Valid = true,
                         Infinite = true
@@ -330,7 +333,7 @@ namespace Stocks.Indicators
                 else
                     return new Sample()
                     {
-                        Value = GetMultiplicationSign(Value, paramOther.Value),
+                        Value = GetMultiplicationSign(this.Value, paramOther.Value),
                         Date = (paramDate == default(DateTime)) ? Date : paramDate,
                         Valid = true,
                         Infinite = true
@@ -375,7 +378,7 @@ namespace Stocks.Indicators
             {
                 return new Sample()
                 {
-                    Value = Value * Value,
+                    Value = this.Value * this.Value,
                     Date = (paramDate == default(DateTime)) ? Date : paramDate,
                     Valid = true,
                     Infinite = false
@@ -395,7 +398,7 @@ namespace Stocks.Indicators
             {
                 return new Sample()
                 {
-                    Value = Value,
+                    Value = this.Value,
                     Date = (paramDate == default(DateTime)) ? Date : paramDate,
                     Valid = true,
                     Infinite = true
@@ -405,7 +408,7 @@ namespace Stocks.Indicators
             {
                 return new Sample()
                 {
-                    Value = Math.Sqrt(Value),
+                    Value = Math.Sqrt(this.Value),
                     Date = (paramDate == default(DateTime)) ? Date : paramDate,
                     Valid = true,
                     Infinite = false
@@ -416,7 +419,7 @@ namespace Stocks.Indicators
         {
             return new Sample()
             {
-                Value = Value,
+                Value = this.Value,
                 Infinite = Infinite,
                 Valid = Valid,
                 Date = Date

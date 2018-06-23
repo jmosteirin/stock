@@ -25,6 +25,19 @@ namespace Stocks
             public int Index { get; set; }
         }
 
+        [Verb("eval", HelpText = "Eval stock.")]
+        class EvalOptions
+        {
+            [Option('i', @"index")]
+            public int Index { get; set; }
+            [Option('b', @"bollinger")]
+            public double Bollinger { get; set; }
+            [Option('m', @"macd")]
+            public double MACD { get; set; }
+            [Option('r', @"rsi")]
+            public double RSI { get; set; }
+        }
+
         [Verb("rich", HelpText = "Lets get rich.")]
         class RichOptions
         {
@@ -53,8 +66,9 @@ namespace Stocks
 
         static int Main(string[] args)
         {
-            var returned = CommandLine.Parser.Default.ParseArguments<ShowCandlesOptions, RichOptions, RefreshCachedIndexesOptions, AddIndexesToCacheOptions, ExportCSVOptions>(args)
+            var returned = CommandLine.Parser.Default.ParseArguments<EvalOptions, ShowCandlesOptions, RichOptions, RefreshCachedIndexesOptions, AddIndexesToCacheOptions, ExportCSVOptions>(args)
               .MapResult(
+                (EvalOptions opts) => RunEvalAndReturnExitCode(opts),
                 (ShowCandlesOptions opts) => RunShowCandlesAndReturnExitCode(opts),
                 (RichOptions opts) => RunRichAndReturnExitCode(opts),
                 (RefreshCachedIndexesOptions opts) => RunRefreshCachedIndexesAndReturnExitCode(opts),
@@ -65,6 +79,29 @@ namespace Stocks
             Console.WriteLine(@"press any key to finish...");
             Console.ReadKey();
             return returned;
+        }
+
+        private static int RunEvalAndReturnExitCode(EvalOptions opts)
+        {
+            var evaluation = stockLogic.Eval(opts.Index, opts.Bollinger, opts.MACD, opts.RSI).ToArray();
+            var bollinger = stockLogic.EvalIndicator(Constants.Bollinger, opts.Index).ToArray();
+            var macd = stockLogic.EvalIndicator(Constants.MACD, opts.Index).ToArray();
+            var rsi = stockLogic.EvalIndicator(Constants.RSI, opts.Index).ToArray();
+            var count = evaluation.Count();
+            for(int i = 0; i< count;i++)
+            {
+                var e = evaluation[i];
+                Console.Write(e.Date.ToShortDateString());
+                Console.Write(e.Valid ? " valid     " : " not valid ");
+                Console.WriteLine(e.Value);
+                Console.Write(@" Bollinger=");
+                Console.Write(bollinger[i].Value);
+                Console.Write(@" MACD=");
+                Console.Write(macd[i].Value);
+                Console.Write(@" RSI=");
+                Console.WriteLine(rsi[i].Value);
+            }
+            return 0;
         }
 
         private static int RunShowCandlesAndReturnExitCode(ShowCandlesOptions opts)

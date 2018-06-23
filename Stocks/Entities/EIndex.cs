@@ -10,6 +10,10 @@ namespace Stocks.Entities
     {
         Ibex35 = 174,
         DowJones = 169,
-        Acciona = 449
+        Acciona = 449,
+	    Acerinox = 445,
+	    ACS = 442,
+	    AmadeusIT = 14615,
+	    ArcelorMittal = 6910
     }
 }

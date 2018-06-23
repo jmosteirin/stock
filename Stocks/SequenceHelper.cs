@@ -94,7 +94,10 @@ namespace Stocks
             var enumerator1 = paramSequence.GetEnumerator();
             var enumerator2 = paramSecondSequence.GetEnumerator();
             while ((enumerator1.MoveNext()) && (enumerator2.MoveNext()))
-                yield return enumerator1.Current.Subtract(enumerator2.Current);
+            {
+                var returned = enumerator1.Current.Subtract(enumerator2.Current);
+                yield return returned;
+            }
         }
         public static IEnumerable<Sample> Add(this IEnumerable<Sample> paramSequence, IEnumerable<Sample> paramSecondSequence)
         {

@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using Stocks.Algorithm;
 using Stocks.Entities;
+using Stocks.Indicators;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -24,7 +25,18 @@ namespace Stocks
 
         public void LetsBecomeRich()
         {
-            var candles = new StockInformation(new StockInformationForIndex((int)Entities.EIndex.DowJones, investingContext.GetCandles(500, Entities.EIndex.DowJones).ToArray()));
+            var candles = 
+                new StockInformation(
+                    new StockInformationForIndex((int)Entities.EIndex.Acciona, 
+                        investingContext.GetCandles(500, Entities.EIndex.Acciona).ToArray()),
+                    new StockInformationForIndex((int)Entities.EIndex.Acerinox,
+                        investingContext.GetCandles(500, Entities.EIndex.Acerinox).ToArray()),
+                    new StockInformationForIndex((int)Entities.EIndex.ACS,
+                        investingContext.GetCandles(500, Entities.EIndex.ACS).ToArray()),
+                    new StockInformationForIndex((int)Entities.EIndex.AmadeusIT,
+                        investingContext.GetCandles(500, Entities.EIndex.AmadeusIT).ToArray()),
+                    new StockInformationForIndex((int)Entities.EIndex.ArcelorMittal,
+                        investingContext.GetCandles(500, Entities.EIndex.ArcelorMittal).ToArray()));
 
             AlgorithmConfiguration[] algorithms = InitAlgorithms();
 
@@ -145,6 +157,27 @@ namespace Stocks
             var indexes = ReadIndexesFromCache().ToList();
             indexes.AddRange(investingContext.GetIndexes(paramStartId, paramEndId));
             SaveIndexesToCache(indexes);
+        }
+
+        public IEnumerable<Sample> Eval(int paramIndex, double paramBollinger, double paramMACD, double paramRSI)
+        {
+            var algorithm = new AlgorithmConfiguration();
+            algorithm.Data[Constants.Bollinger] = new double[] { paramBollinger, 1.0 };
+            algorithm.Data[Constants.MACD] = new double[] { paramMACD, 0.2 };
+            algorithm.Data[Constants.RSI] = new double[] { paramRSI };
+
+            var stockInfo = new StockInformationForIndex(paramIndex, investingContext.GetCandles(500, (Entities.EIndex)paramIndex).ToArray());
+            return algorithm.Evaluate(algorithm.GenerateIndicators(), stockInfo.MidPoints, stockInfo.HighPoints, stockInfo.LowPoints);
+        }
+        public IEnumerable<Sample> EvalIndicator(string paramIndicator, int paramIndex)
+        {
+            var algorithm = new AlgorithmConfiguration();
+            algorithm.Data[Constants.Bollinger] = new double[] { 1.0, 1.0 };
+            algorithm.Data[Constants.MACD] = new double[] { 1.0, 0.2 };
+            algorithm.Data[Constants.RSI] = new double[] { 1.0 };
+
+            var stockInfo = new StockInformationForIndex(paramIndex, investingContext.GetCandles(500, (Entities.EIndex)paramIndex).ToArray());
+            return algorithm.Evaluate(algorithm.GenerateIndicators().Where(i => i.Key == paramIndicator).ToDictionary(p => p.Key, p => p.Value), stockInfo.MidPoints, stockInfo.HighPoints, stockInfo.LowPoints);
         }
     }
 }
