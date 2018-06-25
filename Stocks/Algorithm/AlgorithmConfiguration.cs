@@ -14,35 +14,36 @@ namespace Stocks.Algorithm
         {
             Data = new Dictionary<string, double[]>();
         }
+        public double ThresholdToSell { get; set; }
+        public double ThresholdToBuy { get; set; }
         public Dictionary<string, double[]> Data { get; set; }
         public AlgorithmConfiguration Combine(AlgorithmConfiguration paramOther, double paramRatio = 0.5)
         {
             var result = new AlgorithmConfiguration();
-            var module = 0.0;
             foreach (var key in this.Data.Keys)
             {
                 if ((paramOther.Data.Keys.Contains(key)) && (this.Data[key].Length == paramOther.Data[key].Length))
                 {
                     result.Data[key] = new double[this.Data[key].Length];
                     for (int i = 0; i < this.Data[key].Length; i++)
-                        result.Data[key][i] = (1 - paramRatio) * this.Data[key][i] + paramRatio * paramOther.Data[key][i];
+                        result.Data[key][i] = (1.0 - paramRatio) * this.Data[key][i] + paramRatio * paramOther.Data[key][i];
                 }
-                module += Math.Pow(result.Data[key][0], 2.0);
             }
-            module = Math.Sqrt(module);
+            result.ThresholdToBuy = (1.0 - paramRatio) * this.ThresholdToBuy + paramRatio * paramOther.ThresholdToBuy;
+            result.ThresholdToSell = (1.0 - paramRatio) * this.ThresholdToSell + paramRatio * paramOther.ThresholdToSell;
             return result;
         }
 
-        public double EvaluateMoneyEarnedInLast(StockInformation paramStockInformation, int paramDays = 100, double paramInitialAmount = 1000.0, double paramValueToBuy = 0.4, double paramValueToSell = -0.4)
+        public EvaluationResult EvaluateMoneyEarnedInLast(StockInformation paramStockInformation, int paramDays = 100, double paramInitialAmount = 1000.0)
         {
+            var returned = new EvaluationResult();
+
             var indicators = GenerateIndicators();
 
             if (paramStockInformation.StockInformationForIndexes.Count() == 0)
                 throw new Exception(@"No data");
 
             var numOfSamplesToSkip = paramStockInformation.StockInformationForIndexes.First().MidPoints.Count() - paramDays;
-
-            var maxEarnedMoney = 0.0;
 
             var indexesEvaluation = paramStockInformation.StockInformationForIndexes.
                 Select(s => new
@@ -56,19 +57,21 @@ namespace Stocks.Algorithm
             var numOfStocks = 0.0;
             var stockIndex = 0;
             var wallet = paramInitialAmount;
+            var evaluationSteps = new List<EvaluationStep>();
             for (var day = 0; day < paramDays; day++)
             {
                 var maxEvaluation = indexesEvaluation.Max(e => e.EvalData[day].Value);
                 var maxEvalutaionIndex = indexesEvaluation.First(e => e.EvalData[day].Value == maxEvaluation);
-                if ((maxEvaluation > paramValueToBuy) && (numOfStocks == 0))
+                if ((maxEvaluation > ThresholdToBuy) && (numOfStocks == 0))
                 {
                     //Buy!!
                     stockValue = maxEvalutaionIndex.CheckData[day].Value;
                     stockIndex = maxEvalutaionIndex.StockInformationForIndex.Index;
                     numOfStocks = wallet / stockValue;
                     wallet = 0.0;
+                    evaluationSteps.Add(new EvaluationStep() { Action = true, Buy = true, Stock = (EIndex)stockIndex });
                 }
-                else if ((maxEvaluation > paramValueToBuy) && (numOfStocks != 0) && (maxEvalutaionIndex.StockInformationForIndex.Index != stockIndex))
+                else if ((maxEvaluation > ThresholdToBuy) && (numOfStocks != 0) && (maxEvalutaionIndex.StockInformationForIndex.Index != stockIndex))
                 {
                     //Buy another stock!!
                     var currentStockEvaluation = indexesEvaluation.First(e => e.StockInformationForIndex.Index == stockIndex);
@@ -77,27 +80,39 @@ namespace Stocks.Algorithm
                     stockIndex = maxEvalutaionIndex.StockInformationForIndex.Index;
                     numOfStocks = wallet / stockValue;
                     wallet = 0.0;
+                    evaluationSteps.Add(new EvaluationStep() { Action = true, Buy = true, Stock = (EIndex)stockIndex });
                 }
                 else
                 {
                     var currentStockEvaluation = indexesEvaluation.FirstOrDefault(e => e.StockInformationForIndex.Index == stockIndex);
-                    if ((currentStockEvaluation != null) && ((currentStockEvaluation.EvalData[day].Value < paramValueToSell) && (numOfStocks != 0)))
+                    if ((currentStockEvaluation != null) && ((currentStockEvaluation.EvalData[day].Value < ThresholdToSell) && (numOfStocks != 0)))
                     {
                         //Sell!!
                         wallet = currentStockEvaluation.CheckData[day].Value * numOfStocks;
                         stockIndex = 0; 
                         stockValue = 0.0;
                         numOfStocks = 0.0;
+                        evaluationSteps.Add(new EvaluationStep() { Action = true, Buy = false, Stock = (EIndex)stockIndex });
                     }
+                    else
+                        evaluationSteps.Add(new EvaluationStep() { Action = false });
                 }
             }
 
             if(numOfStocks != 0)
             { 
                 var lastStockEvaluation = indexesEvaluation.First(e => e.StockInformationForIndex.Index == stockIndex);
-                return (wallet + (lastStockEvaluation.CheckData[paramDays -1].Value * numOfStocks)) / paramInitialAmount;
+                returned.FinalMoney = wallet + (lastStockEvaluation.CheckData[paramDays - 1].Value * numOfStocks);
+                returned.InitialMoney = paramInitialAmount;
+                returned.ProfitRatio = returned.FinalMoney / returned.InitialMoney;
+                returned.Steps = evaluationSteps;
+                return returned;
             }
-            return wallet / paramInitialAmount;
+            returned.FinalMoney = wallet;
+            returned.InitialMoney = paramInitialAmount;
+            returned.ProfitRatio = returned.FinalMoney / returned.InitialMoney;
+            returned.Steps = evaluationSteps;
+            return returned;
         }
 
         public Dictionary<string, IIndicator> GenerateIndicators()

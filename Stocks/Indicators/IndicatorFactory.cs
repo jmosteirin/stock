@@ -23,11 +23,18 @@ namespace Stocks.Indicators
                                          new Tuple<EParameter, double>[] { new Tuple<Entities.EParameter, double>(EParameter.DecayFactor, 0.2) });
                 case Constants.RSI:
                     return new Indicator(Constants.RSI,
-                                         (paramMidPoints, paramHighPoints, paramLowPoints, p) => 
+                                         (paramMidPoints, paramHighPoints, paramLowPoints, p) =>
                                             paramHighPoints.Subtract(paramLowPoints).
                                             RSI(14).
                                             Transform(sam => sam.Multiply(new Sample(0.02, sam.Date)).
                                             Subtract(new Sample(1.0, sam.Date))),
+                                         new Tuple<EParameter, double>[0]);
+                case Constants.Stability:
+                    return new Indicator(Constants.Stability,
+                                         (paramMidPoints, paramHighPoints, paramLowPoints, p) =>
+                                            paramMidPoints.StandardDeviation(20).
+                                            Divide(paramMidPoints.Average(20)).
+                                            Transform(s => new Sample(1.0, s.Date).Subtract(s)).Clip(1),
                                          new Tuple<EParameter, double>[0]);
                 default:
                     throw new ArgumentException(@"paramIndicatorName");

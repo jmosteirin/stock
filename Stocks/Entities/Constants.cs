@@ -11,6 +11,7 @@ namespace Stocks.Entities
         public const string Bollinger = @"Bollinger";
         public const string MACD = @"MACD";
         public const string RSI = @"RSI";
+        public const string Stability = @"Stability";
 
         public const string IndexesCacheFileName = @"stock-indexes.json";
         public const int StockIndexesStaringId = 238;
