@@ -23,7 +23,7 @@ namespace Stocks
             investingContext = paramInvestingContext;
         }
 
-        public void LetsBecomeRich()
+        public EvaluationStep LetsBecomeRich(int paramCurrentIndex = 0)
         {
             var candles = 
                 new StockInformation(
@@ -68,6 +68,8 @@ namespace Stocks
             }
 
             PrintAlgorithms(candles, algorithms);
+
+            return algorithms.First().Predict(candles, paramCurrentIndex);
         }
 
         private StockInformationForIndex BuildStockInformationForIndex(EIndex paramIndex)

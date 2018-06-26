@@ -18,6 +18,16 @@ namespace Stocks
         static IInvestingContext investingContext = new InvestingContext();
         static IStockLogic stockLogic = new StockLogic(investingContext);
 
+        [Verb("advice", HelpText = "Advices which operation to do.")]
+        class AdviceOptions
+        {
+            [Option('i', @"index", Default = 0, Required = false)]
+            public int Index { get; set; }
+        }
+        [Verb("list-indexes", HelpText = "Lists all the indexes available.")]
+        class ListIndexesOptions
+        {
+        }
         [Verb("show-candles", HelpText = "Shows the candles for a particular index.")]
         class ShowCandlesOptions
         {
@@ -66,8 +76,10 @@ namespace Stocks
 
         static int Main(string[] args)
         {
-            var returned = CommandLine.Parser.Default.ParseArguments<EvalOptions, ShowCandlesOptions, RichOptions, RefreshCachedIndexesOptions, AddIndexesToCacheOptions, ExportCSVOptions>(args)
+            var returned = CommandLine.Parser.Default.ParseArguments<AdviceOptions, ListIndexesOptions, EvalOptions, ShowCandlesOptions, RichOptions, RefreshCachedIndexesOptions, AddIndexesToCacheOptions, ExportCSVOptions>(args)
               .MapResult(
+                (AdviceOptions opts) => RunAdvoceAndReturnExitCode(opts),
+                (ListIndexesOptions opts) => RunListIndexesAndReturnExitCode(opts),
                 (EvalOptions opts) => RunEvalAndReturnExitCode(opts),
                 (ShowCandlesOptions opts) => RunShowCandlesAndReturnExitCode(opts),
                 (RichOptions opts) => RunRichAndReturnExitCode(opts),
@@ -79,6 +91,23 @@ namespace Stocks
             Console.WriteLine(@"press any key to finish...");
             Console.ReadKey();
             return returned;
+        }
+
+        private static int RunAdvoceAndReturnExitCode(AdviceOptions opts)
+        {
+            EvaluationStep step = stockLogic.LetsBecomeRich(opts.Index);
+            Console.WriteLine(step.ToString());
+            return 0;
+        }
+
+        private static int RunListIndexesAndReturnExitCode(ListIndexesOptions opts)
+        {
+            foreach (var value in Enum.GetValues(typeof(EIndex)))
+            {
+                Console.Write(((int)value).ToString().PadLeft(7).PadRight(8));
+                Console.WriteLine(value.ToString());
+            }
+            return 0;
         }
 
         private static int RunEvalAndReturnExitCode(EvalOptions opts)

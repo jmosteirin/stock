@@ -58,26 +58,26 @@ namespace Stocks.Algorithm
             var stockIndex = 0;
             var wallet = paramInitialAmount;
             var evaluationSteps = new List<EvaluationStep>();
-            for (var day = 0; day < paramDays; day++)
+            for (var day = 1; day < paramDays; day++)
             {
-                var maxEvaluation = indexesEvaluation.Max(e => e.EvalData[day].Value);
-                var maxEvalutaionIndex = indexesEvaluation.First(e => e.EvalData[day].Value == maxEvaluation);
+                var maxEvaluation = indexesEvaluation.Max(e => e.EvalData[day-1].Value);
+                var maxEvaluationIndex = indexesEvaluation.First(e => e.EvalData[day-1].Value == maxEvaluation);
                 if ((maxEvaluation > ThresholdToBuy) && (numOfStocks == 0))
                 {
                     //Buy!!
-                    stockValue = maxEvalutaionIndex.CheckData[day].Value;
-                    stockIndex = maxEvalutaionIndex.StockInformationForIndex.Index;
+                    stockValue = maxEvaluationIndex.CheckData[day].Value;
+                    stockIndex = maxEvaluationIndex.StockInformationForIndex.Index;
                     numOfStocks = wallet / stockValue;
                     wallet = 0.0;
                     evaluationSteps.Add(new EvaluationStep() { Action = true, Buy = true, Stock = (EIndex)stockIndex });
                 }
-                else if ((maxEvaluation > ThresholdToBuy) && (numOfStocks != 0) && (maxEvalutaionIndex.StockInformationForIndex.Index != stockIndex))
+                else if ((maxEvaluation > ThresholdToBuy) && (numOfStocks != 0) && (maxEvaluationIndex.StockInformationForIndex.Index != stockIndex))
                 {
                     //Buy another stock!!
                     var currentStockEvaluation = indexesEvaluation.First(e => e.StockInformationForIndex.Index == stockIndex);
                     wallet = currentStockEvaluation.CheckData[day].Value * numOfStocks;
-                    stockValue = maxEvalutaionIndex.CheckData[day].Value;
-                    stockIndex = maxEvalutaionIndex.StockInformationForIndex.Index;
+                    stockValue = maxEvaluationIndex.CheckData[day].Value;
+                    stockIndex = maxEvaluationIndex.StockInformationForIndex.Index;
                     numOfStocks = wallet / stockValue;
                     wallet = 0.0;
                     evaluationSteps.Add(new EvaluationStep() { Action = true, Buy = true, Stock = (EIndex)stockIndex });
@@ -99,7 +99,7 @@ namespace Stocks.Algorithm
                 }
             }
 
-            if(numOfStocks != 0)
+            if (numOfStocks != 0)
             { 
                 var lastStockEvaluation = indexesEvaluation.First(e => e.StockInformationForIndex.Index == stockIndex);
                 returned.FinalMoney = wallet + (lastStockEvaluation.CheckData[paramDays - 1].Value * numOfStocks);
@@ -113,6 +113,44 @@ namespace Stocks.Algorithm
             returned.ProfitRatio = returned.FinalMoney / returned.InitialMoney;
             returned.Steps = evaluationSteps;
             return returned;
+        }
+
+        public EvaluationStep Predict(StockInformation paramStockInformation, int paramCurrentIndex)
+        {
+            var returned = new EvaluationResult();
+
+            var indicators = GenerateIndicators();
+
+            if (paramStockInformation.StockInformationForIndexes.Count() == 0)
+                throw new Exception(@"No data");
+
+            var indexesEvaluation = paramStockInformation.StockInformationForIndexes.
+                Select(s => new
+                {
+                    StockInformationForIndex = s,
+                    EvalData = Evaluate(indicators, s.MidPoints, s.HighPoints, s.LowPoints).Last(),
+                }).ToArray();
+
+            var maxEvaluation = indexesEvaluation.Max(e => e.EvalData.Value);
+            var maxEvaluationIndex = indexesEvaluation.First(e => e.EvalData.Value == maxEvaluation);
+            if ((maxEvaluation > ThresholdToBuy) && (paramCurrentIndex == 0))
+            {
+                return new EvaluationStep() { Action = true, Buy = true, Stock = (EIndex)maxEvaluationIndex.StockInformationForIndex.Index };
+            }
+            else if ((maxEvaluation > ThresholdToBuy) && (paramCurrentIndex != 0) && (maxEvaluationIndex.StockInformationForIndex.Index != paramCurrentIndex))
+            {
+                return new EvaluationStep() { Action = true, Buy = true, Stock = (EIndex)maxEvaluationIndex.StockInformationForIndex.Index };
+            }
+            else
+            {
+                var currentStockEvaluation = indexesEvaluation.FirstOrDefault(e => e.StockInformationForIndex.Index == paramCurrentIndex);
+                if ((currentStockEvaluation != null) && ((currentStockEvaluation.EvalData.Value < ThresholdToSell) && (paramCurrentIndex != 0)))
+                {
+                    return new EvaluationStep() { Action = true, Buy = false, Stock = (EIndex)maxEvaluationIndex.StockInformationForIndex.Index };
+                }
+                else
+                    return new EvaluationStep() { Action = false };
+            }
         }
 
         public Dictionary<string, IIndicator> GenerateIndicators()
