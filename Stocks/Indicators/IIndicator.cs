@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Stocks.Entities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,7 +12,7 @@ namespace Stocks.Indicators
         string GetName();
         int GetExtraDimensionCount();
         void SetExtraDimension(int paramDimension, double paramDimensionValue);
-        IEnumerable<DoubleSample> GetValue(IEnumerable<DoubleSample> paramMidPoints, IEnumerable<DoubleSample> paramHighPoints, IEnumerable<DoubleSample> paramLowPoints);
+        IEnumerable<SingleValueSample<double>> GetValue(IEnumerable<SingleValueSample<double>> paramMidPoints, IEnumerable<SingleValueSample<double>> paramHighPoints, IEnumerable<SingleValueSample<double>> paramLowPoints);
         string GetDimensionName(int paramDimension);
     }
 }

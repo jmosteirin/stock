@@ -47,12 +47,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Entities\DoubleSample.cs" />
+    <Compile Include="Algorithm\AlgorithmConfiguration.cs" />
     <Compile Include="Entities\IndicatorConstants.cs" />
     <Compile Include="Entities\EParameter.cs" />
     <Compile Include="Entities\Candle.cs" />
     <Compile Include="Entities\EIndex.cs" />
     <Compile Include="IInvestingContext.cs" />
+    <Compile Include="Indicators\IIndicator.cs" />
+    <Compile Include="Indicators\Indicator.cs" />
+    <Compile Include="Indicators\IndicatorFactory.cs" />
     <Compile Include="InvestingContext.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -63,9 +66,7 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Algorithm\" />
     <Folder Include="Calculators\" />
-    <Folder Include="Indicators\" />
     <Folder Include="Model\" />
   </ItemGroup>
   <ItemGroup>

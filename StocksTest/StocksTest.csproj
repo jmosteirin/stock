@@ -56,9 +56,9 @@
     <Compile Include="SequenceHelperTest.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Stocks\Stocks.csproj">
-      <Project>{7BFDAFE5-8E24-4742-B8C4-48DDEEA7426D}</Project>
-      <Name>Stocks</Name>
+    <ProjectReference Include="..\Stocks.Core\Stocks.Core.csproj">
+      <Project>{916f8467-6e9f-4f63-b102-b254b0b77a93}</Project>
+      <Name>Stocks.Core</Name>
     </ProjectReference>
   </ItemGroup>
   <Choose>

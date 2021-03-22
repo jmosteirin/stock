@@ -11,3 +11,5 @@ D:\git\stock\StocksTest\obj\Debug\StocksTest.csprojResolveAssemblyReference.cach
 D:\git\stock\StocksTest\obj\Debug\StocksTest.csproj.CoreCompileInputs.cache
 D:\git\stock\StocksTest\obj\Debug\StocksTest.dll
 D:\git\stock\StocksTest\obj\Debug\StocksTest.pdb
+C:\Users\mosteja\source\personal-repos\stock\StocksTest\obj\Debug\StocksTest.csprojAssemblyReference.cache
+C:\Users\mosteja\source\personal-repos\stock\StocksTest\obj\Debug\StocksTest.csproj.CoreCompileInputs.cache

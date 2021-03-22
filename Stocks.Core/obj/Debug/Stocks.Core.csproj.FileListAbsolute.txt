@@ -3,3 +3,8 @@ D:\git\stock\Stocks.Core\bin\Debug\Stocks.Core.dll
 D:\git\stock\Stocks.Core\bin\Debug\Stocks.Core.pdb
 D:\git\stock\Stocks.Core\obj\Debug\Stocks.Core.dll
 D:\git\stock\Stocks.Core\obj\Debug\Stocks.Core.pdb
+C:\Users\mosteja\source\personal-repos\stock\Stocks.Core\bin\Debug\Stocks.Core.dll
+C:\Users\mosteja\source\personal-repos\stock\Stocks.Core\bin\Debug\Stocks.Core.pdb
+C:\Users\mosteja\source\personal-repos\stock\Stocks.Core\obj\Debug\Stocks.Core.csproj.CoreCompileInputs.cache
+C:\Users\mosteja\source\personal-repos\stock\Stocks.Core\obj\Debug\Stocks.Core.dll
+C:\Users\mosteja\source\personal-repos\stock\Stocks.Core\obj\Debug\Stocks.Core.pdb

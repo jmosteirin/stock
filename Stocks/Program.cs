@@ -1,4 +1,5 @@
-﻿using Stocks.Entities;
+﻿using Stocks.Algorithm;
+using Stocks.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,9 +13,9 @@ namespace Stocks
         {
             //IInvestingContext investingContext = new InvestingContext();
             //var candles = investingContext.GetCandles(500, Entities.EIndex.DowJones);
-            //var midPoints = candles.Select(c => new DoubleSample() { Date = c.Date, Valid = true, InternalValue = (c.High + c.Low) / 2.0 }).ToArray();
-            //var highPoints = candles.Select(c => new DoubleSample() { Date = c.Date, Valid = true, InternalValue = c.High }).ToArray();
-            //var lowPoints = candles.Select(c => new DoubleSample() { Date = c.Date, Valid = true, InternalValue = c.Low }).ToArray();
+            //var midPoints = candles.Select(c => new SingleValueSample<double>() { Date = c.Date, Valid = true, InternalValue = (c.High + c.Low) / 2.0 }).ToArray();
+            //var highPoints = candles.Select(c => new SingleValueSample<double>() { Date = c.Date, Valid = true, InternalValue = c.High }).ToArray();
+            //var lowPoints = candles.Select(c => new SingleValueSample<double>() { Date = c.Date, Valid = true, InternalValue = c.Low }).ToArray();
 
             //var temp = new List<AlgorithmConfiguration>();
             //for (int i = 0; i < 8; i++)
@@ -53,19 +54,19 @@ namespace Stocks
             //Console.ReadKey();
         }
 
-        //private static AlgorithmConfiguration GenerateRandomAlgorithConfiguration()
-        //{
-        //    var random = new Random();
-        //    var algorithm = new AlgorithmConfiguration();
-        //    var accumulated = 0.0;
-        //    var ratio = random.NextDouble();
-        //    algorithm.Data[IndicatorConstants.Bollinger] = new double[] { ratio, 1.0 };
-        //    accumulated += ratio;
-        //    ratio = (1.0 - accumulated) * random.NextDouble();
-        //    algorithm.Data[IndicatorConstants.MACD] = new double[] { ratio, 0.2 };
-        //    accumulated += ratio;
-        //    algorithm.Data[IndicatorConstants.RSI] = new double[] { (1.0 - accumulated) };
-        //    return algorithm;
-        //}
+        private static AlgorithmConfiguration GenerateRandomAlgorithConfiguration()
+        {
+            var random = new Random();
+            var algorithm = new AlgorithmConfiguration();
+            var accumulated = 0.0;
+            var ratio = random.NextDouble();
+            algorithm.Data[IndicatorConstants.Bollinger] = new double[] { ratio, 1.0 };
+            accumulated += ratio;
+            ratio = (1.0 - accumulated) * random.NextDouble();
+            algorithm.Data[IndicatorConstants.MACD] = new double[] { ratio, 0.2 };
+            accumulated += ratio;
+            algorithm.Data[IndicatorConstants.RSI] = new double[] { (1.0 - accumulated) };
+            return algorithm;
+        }
     }
 }

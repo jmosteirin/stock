@@ -17,3 +17,7 @@ D:\git\stock\Stocks\bin\Debug\Stocks.Core.pdb
 D:\git\stock\Stocks\bin\Debug\Newtonsoft.Json.xml
 D:\git\stock\Stocks\obj\Debug\Stocks.exe
 D:\git\stock\Stocks\obj\Debug\Stocks.pdb
+C:\Users\mosteja\source\personal-repos\stock\Stocks\obj\Debug\Stocks.csprojAssemblyReference.cache
+C:\Users\mosteja\source\personal-repos\stock\Stocks\obj\Debug\Stocks.csproj.CoreCompileInputs.cache
+C:\Users\mosteja\source\personal-repos\stock\Stocks\obj\Debug\Stocks.exe
+C:\Users\mosteja\source\personal-repos\stock\Stocks\obj\Debug\Stocks.pdb
