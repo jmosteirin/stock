@@ -43,6 +43,7 @@
     <Compile Include="Entities\Constants.cs" />
     <Compile Include="Calculators\SampleCalculator.cs" />
     <Compile Include="Calculators\SingleValueSampleCalculator.cs" />
+    <Compile Include="Entities\ExtendedDouble.cs" />
     <Compile Include="Entities\NumericWrapper.cs" />
     <Compile Include="Entities\Sample.cs" />
     <Compile Include="Entities\SingleValueSample.cs" />
